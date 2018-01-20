@@ -8,6 +8,7 @@
 //Pin 17 is A3
 //Pin 18 is A8
 
+#include "datastructures.h"
 
 #define PIN_PELTIER      5 //Relay Shield
 #define PIN_TMP_SENSOR   A2 //A2 
@@ -21,29 +22,29 @@
 #define LOOP_WAIT 10000
 
 int i = 0;
+
+struct CurrentStatus cs;
+
 void setup() {
   Serial.begin(9600);
   peltier_setup(PIN_PELTIER);
+  cs.humidity = 0;
+  cs.temperature = 0;
+  cs.fan1_hz = 0;
+  cs.fan2_hz = 0;
+  cs.max_tmp = 0;
+  cs.min_tmp = 0;
+  cs.peltier_cool_status = false;
 }
 
 void loop() {
+  status_read_environment(&cs);
+  status_print(&cs);
   
-  // put your main code here, to run repeatedly:
-  Serial.println("Inside fan");
-  fan_print(PIN_FAN_PULSE_INSIDE);
-  //Serial.println("Outside fan");
-  //fan_print(PIN_FAN_PULSE_OUTSIDE);
-  float t = dht_temperature();
-  dht_print_status();
-  
-  if(t > MAX_TEMPERATURE){
-    pelitier_on(PIN_PELTIER);
-    fan_set_speed(PIN_FAN_INSIDE, 0);
-    fan_set_speed(PIN_FAN_OUTSIDE, 0);
+  if(cs.temperature > MAX_TEMPERATURE){
+    status_start_cool(&cs);
   }else{
-    pelitier_off(PIN_PELTIER);
-    fan_set_speed(PIN_FAN_INSIDE, 255);
-    fan_set_speed(PIN_FAN_OUTSIDE, 255);
+    status_stop_cool(&cs);
    }
    
   delay(LOOP_WAIT);

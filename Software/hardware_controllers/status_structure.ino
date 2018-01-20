@@ -1,6 +1,7 @@
 
 
 void status_print(struct CurrentStatus * cs){
+  Serial.print("STATUS=");
   Serial.print("Humidity: "); 
   Serial.print(cs->humidity);
   Serial.print("%\tTemperature: "); 
@@ -32,4 +33,50 @@ void status_stop_cool(struct CurrentStatus * cs){
   fan_set_speed(PIN_FAN_INSIDE, 255);
   fan_set_speed(PIN_FAN_OUTSIDE, 255);
   cs->peltier_cool_status = true;
+}
+
+
+void recvWithEndMarker(struct CurrentStatus * cs) {
+  static byte ndx = 0;
+  char endMarker = '\n';
+  char rc;
+ 
+  while (Serial.available() > 0 && cs->new_data == false) {
+     rc = Serial.read();
+     if (rc != endMarker) {
+      cs->receivedChars[ndx] = rc;
+      ndx++;
+      if (ndx >= numChars) {
+        ndx = numChars - 1;
+      }
+     }else {
+      cs->receivedChars[ndx] = '\0'; // terminate the string
+      ndx = 0;
+      cs->new_data = true;
+    }
+  }
+}
+
+void parse_new_data(struct CurrentStatus * cs) {
+  if (cs->new_data == true) {
+    String messageFromPC;
+    char * strtokIndx; // this is used by strtok() as an index
+    strtokIndx = strtok(cs->receivedChars,"=");
+    messageFromPC = String(strtokIndx); // copy it to messageFromPC
+    Serial.print("CMD=");
+    Serial.print(messageFromPC);
+    Serial.println();
+    if(messageFromPC == "PRINT"){
+      status_print(cs);
+    }else if(messageFromPC == "MAX_TEMP"){
+      strtokIndx = strtok(NULL, ",");
+      cs->max_tmp = atof(strtokIndx);
+      status_print(cs);
+    } else{
+      Serial.print("ERROR=Unknown command ");
+      Serial.print(messageFromPC);
+      Serial.println();
+    }
+    cs->new_data = false;  
+  }
 }

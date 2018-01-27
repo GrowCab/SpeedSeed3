@@ -1,2 +1,2 @@
 # SpeedSeed3
-SS^3
+SS<sup>3</sup>

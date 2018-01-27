@@ -102,6 +102,7 @@ void status_control_temperature(struct CurrentStatus * cs){
 }
 
 
+
 void status_control_humidity(struct CurrentStatus * cs){
   cs->next_humidity_fan_status = cs->humidity > cs->max_humidity;
   if(cs->humidity_fan_status != cs->next_humidity_fan_status){

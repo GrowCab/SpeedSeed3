@@ -1,12 +1,12 @@
-void peltier_setup(int port){
+void relay_setup(int port){
   digitalWrite(port, LOW);
   pinMode(port, OUTPUT);
 }
 
-void pelitier_on(int port){
+void relay_on(int port){
   digitalWrite(port, HIGH);
 }
 
-void pelitier_off(int port){
+void relay_off(int port){
   digitalWrite(port, LOW);
 }

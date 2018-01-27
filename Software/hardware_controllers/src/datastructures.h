@@ -12,6 +12,8 @@ typedef struct CurrentStatus
    bool peltier_cool_status;
    bool next_peltier_cool_status;
    bool new_data;
-   
-} current_status ;
+   bool humidity_fan_status;
+   bool next_humidity_fan_status;
+   float max_humidity;
 
+} current_status ;

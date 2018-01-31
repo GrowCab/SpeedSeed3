@@ -18,6 +18,8 @@ class Arc extends Component {
   updateD3(newProps) {
     this.arc.innerRadius(newProps.innerRadius);
     this.arc.outerRadius(newProps.outerRadius);
+    this.arc.cornerRadius(newProps.cornerRadius);
+    this.arc.padAngle(newProps.padAngle);
     }
 
   render() {

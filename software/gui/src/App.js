@@ -5,6 +5,10 @@ import ArcChart from './ArcChart'
 import DialControl from './components/DialControl'
 
 class App extends Component {
+  constructor(props) {
+    super(props);
+    this.pAngle = 0.008;
+  }
   render() {
     return (
       <div className="App">
@@ -18,7 +22,7 @@ class App extends Component {
         <div class="row">
   <div class="col-sm-4">
   <svg 
-          height="200" width="200"><DialControl currentValue="Temperature" x={100} y={100} outerRadius={100} innerRadius={50} 
+          height="200" width="200"><DialControl currentValue="Temperature" x={100} y={100} outerRadius={100} innerRadius={50} padAngle={this.pAngle} 
           data={
             [
               {value: 10, label: '-2 C'},
@@ -31,7 +35,7 @@ class App extends Component {
   </div>
   <div class="col-sm-4">
   <svg 
-          height="200" width="200"><DialControl currentValue="Illumination" x={100} y={100} outerRadius={100} innerRadius={50} 
+          height="200" width="200"><DialControl currentValue="Illumination" x={100} y={100} outerRadius={100} innerRadius={50} padAngle={this.pAngle}
           data={
             [
               {value: 30, label: '5 lum'},
@@ -44,7 +48,7 @@ class App extends Component {
 </div>
   <div class="col-sm-4">
   <svg 
-          height="200" width="200"><DialControl currentValue="Humidity" x={100} y={100} outerRadius={100} innerRadius={50}
+          height="200" width="200"><DialControl currentValue="Humidity" x={100} y={100} outerRadius={100} innerRadius={50} padAngle={this.pAngle}
           data={
             [
               {value: 20, label: '20 %'},

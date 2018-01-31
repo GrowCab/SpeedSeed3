@@ -17,6 +17,7 @@ class DialControl extends Component {
         data={d}
         innerRadius={this.props.innerRadius}
         outerRadius={this.props.outerRadius}
+        padAngle={this.props.padAngle}
         color={this.colors(i)} />
     );
   }

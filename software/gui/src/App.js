@@ -47,9 +47,11 @@ class App extends Component {
           height="200" width="200"><DialControl currentValue="Humidity" x={100} y={100} outerRadius={100} innerRadius={50}
           data={
             [
-              {value: 10, label: '-2 C'},
-              {value: 30, label: '16 C'},
-              {value: 80, label: '30 C'}
+              {value: 20, label: '20 %'},
+              {value: 30, label: '25 %'},
+              {value: 45, label: '45 %'},
+              {value: 50, label: '60 %'},
+              {value: 80, label: '40 %'}
             ]
             }
           />

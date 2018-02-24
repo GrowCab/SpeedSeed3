@@ -4,11 +4,18 @@ import "./App.css";
 import DialControl from "./components/DialControl";
 
 class App extends Component {
+	state = {test: []}
 	constructor(props) {
 		super(props);
 		this.pAngle = 0.012;
 		this.width = 300;
 		this.height = 300;
+	}
+
+	componentDidMount(){
+		fetch('/getLuminance')
+		.then(res => res.json())
+		.then(test => this.setState({test}));
 	}
 	render() {
 		return (
@@ -86,6 +93,12 @@ class App extends Component {
 						<button class="btn btn-primary">Submit</button>
 					</form>
 				</div>
+				<h1>Data from /getLuminance</h1>
+				<ul>
+					{this.state.test.map(test =>
+						<li key={test.id}>{test.value}</li>
+					)}
+					</ul>
 			</div>
 		);
 	}

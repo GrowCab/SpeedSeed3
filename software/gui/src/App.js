@@ -18,12 +18,12 @@ class App extends Component {
 	}
 
 	componentDidMount(){
-		this.timer = setInterval(()=> this.getItems(), 10000);
+		this.timer = setInterval(()=> this.getItems(), 5000);
 	}
 	getItems() {
 		fetch('/getMonitors')
 		.then(res => res.json())
-		.then(devMonitors => this.setState({devMonitorsdevLuminance}));
+		.then(devMonitors => this.setState({devMonitors}));
 	  }
 	
 	componentWillUnmount() {
@@ -108,8 +108,8 @@ class App extends Component {
 				</div>
 				<h1>Data from /getLuminance</h1>
 				<ul>
-					{this.state.devLuminance.map(devLuminance =>
-						<li key={devLuminance.id}>{devLuminance.value}</li>
+					{this.state.devMonitors.map(devMonitors =>
+						<li key="Temperature">{devMonitors.temperature}</li>
 					)}
 					</ul>
 			</div>

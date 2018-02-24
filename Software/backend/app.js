@@ -7,9 +7,7 @@ var bodyParser = require('body-parser');
 
 var index = require('./routes/index');
 var users = require('./routes/users');
-var getTemperature = require('./routes/getTemperature');
-var getHumidity = require('./routes/getHumidity');
-var getLuminance = require('./routes/getLuminance');
+var getMonitors = require('./routes/getMonitors');
 var setLuminance = require('./routes/setLuminance');
 
 var app = express();
@@ -29,8 +27,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', index);
 app.use('/users', users);
 app.use('/getTemperature', getTemperature);
-app.use('/getHumidity', getHumidity);
-app.use('/getLuminance', getLuminance);
+app.use('/getMonitors', getMonitors);
 app.use('/setLuminance', setLuminance);
 
 // catch 404 and forward to error handler

@@ -6,7 +6,7 @@ import DialControl from "./components/DialControl";
 // use material theme
 import 'react-times/css/material/default.css';
 // or you can use classic theme
-//import 'react-times/css/classic/default.css';
+import 'react-times/css/classic/default.css';
 
 class App extends Component {
 	state = {
@@ -46,7 +46,7 @@ class App extends Component {
 					<div class="row">
 						<div class="col-sm-4">
 							<svg height={this.height} width={this.width}>
-								<DialControl currentValue="Temperature" x={100} y={100} outerRadius={100} innerRadius={50} padAngle={this.pAngle} 
+								<DialControl currentValue={this.state.devMonitors.temperature} x={100} y={100} outerRadius={100} innerRadius={50} padAngle={this.pAngle} 
 									data={
 										[
 											{value: 10, label: "-2 C"},
@@ -59,7 +59,7 @@ class App extends Component {
 						</div>
 						<div class="col-sm-4">
 							<svg height={this.height} width={this.width}>
-								<DialControl currentValue="Illumination" x={100} y={100} outerRadius={100} innerRadius={50} padAngle={this.pAngle}
+								<DialControl currentValue={this.state.devMonitors.luminance} x={100} y={100} outerRadius={100} innerRadius={50} padAngle={this.pAngle}
 									data={
 										[
 											{value: 30, label: "5 lum"},
@@ -72,7 +72,7 @@ class App extends Component {
 						</div>
 						<div class="col-sm-4">
 							<svg height={this.height} width={this.width}>
-								<DialControl currentValue="Humidity" x={100} y={100} outerRadius={100} innerRadius={50} padAngle={this.pAngle}
+								<DialControl currentValue={this.state.devMonitors.humidity} x={100} y={100} outerRadius={100} innerRadius={50} padAngle={this.pAngle}
 									data={
 										[
 											{value: 20, label: "20 %"},
@@ -109,14 +109,6 @@ class App extends Component {
 						</div>
 						<button class="btn btn-primary">Submit</button>
 					</form>
-				</div>
-				<h1>Data from /getMonitors</h1>
-				<div>
-					<ul>
-						<li>{this.state.devMonitors.temperature}</li>
-						<li>{this.state.devMonitors.humidity}</li>
-						<li>{this.state.devMonitors.luminance}</li>
-					</ul>
 				</div>
 			</div>
 		);

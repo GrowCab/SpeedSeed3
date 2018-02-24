@@ -1,21 +1,28 @@
 var express = require('express');
 var router = express.Router();
 var fs = require("fs");
+var mongojs = require("mongojs")
 
-/* GET users listing. */
+/* SET settings listing. */
 router.get('/', function(req, res, next) {
   var myJson = [
     {id: 1, value:"120"},
     {id: 2, value:"100"},
   ];
-  fs.writeFile( "filename1.json", JSON.stringify( myJson ), "utf8" );
-  // And then, to read it...
-  var obj;
-  fs.readFile("filename.json", 'utf8', function (err, data) {
-    if (err) res.send("culo peluo"); throw err;
-    obj = JSON.parse(data);
-  });
-    res.json(myJson);
+  var uri = "mongodb://192.168.1.76:27017/speedseed3",
+  db = mongojs(uri, ["testing"]);
+
+  db.on('error', function (err) {
+  console.log('database error', err)
+  })
+
+  db.on('connect', function () {
+  console.log('database connected')
+  })
+
+  db.testing.save({myJson})
+
+  res.json(myJson);
 });
 
 module.exports = router;

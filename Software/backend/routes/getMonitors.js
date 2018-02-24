@@ -4,8 +4,9 @@ var router = express.Router();
 /* GET users listing. */
 router.get('/', function(req, res, next) {
   var myJson = [
-    {id: 1, value:"120"},
-    {id: 2, value:"100"},
+    {humidity: "120"},
+    {temperature: "100"},
+    {luminance: "30"},
   ];
   res.json(myJson);
 });

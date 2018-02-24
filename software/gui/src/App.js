@@ -4,7 +4,12 @@ import "./App.css";
 import DialControl from "./components/DialControl";
 
 class App extends Component {
-	state = {test: []}
+	state = {
+		devMonitors: [],
+		tempSettings: [],
+		humSettings: [],
+		lumSettings: [],
+	}
 	constructor(props) {
 		super(props);
 		this.pAngle = 0.012;
@@ -13,10 +18,18 @@ class App extends Component {
 	}
 
 	componentDidMount(){
-		fetch('/getLuminance')
-		.then(res => res.json())
-		.then(test => this.setState({test}));
+		this.timer = setInterval(()=> this.getItems(), 10000);
 	}
+	getItems() {
+		fetch('/getMonitors')
+		.then(res => res.json())
+		.then(devMonitors => this.setState({devMonitorsdevLuminance}));
+	  }
+	
+	componentWillUnmount() {
+		this.timer = null;
+	  }
+	
 	render() {
 		return (
 			<div className="App">
@@ -95,8 +108,8 @@ class App extends Component {
 				</div>
 				<h1>Data from /getLuminance</h1>
 				<ul>
-					{this.state.test.map(test =>
-						<li key={test.id}>{test.value}</li>
+					{this.state.devLuminance.map(devLuminance =>
+						<li key={devLuminance.id}>{devLuminance.value}</li>
 					)}
 					</ul>
 			</div>

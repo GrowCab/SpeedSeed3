@@ -30,5 +30,6 @@ while True:
             json_data = json.loads(data)
             if ('status' in json_data):
                 json_data['status']['timestamp'] = datetime.datetime.utcnow()
+                print(json.dumps(json_data))
         except:
             pass

@@ -1,7 +1,12 @@
 import React, { Component } from "react";
+import TimePicker from 'react-times';
 import logo from "./logo.svg";
 import "./App.css";
 import DialControl from "./components/DialControl";
+// use material theme
+import 'react-times/css/material/default.css';
+// or you can use classic theme
+//import 'react-times/css/classic/default.css';
 
 class App extends Component {
 	state = {
@@ -83,12 +88,12 @@ class App extends Component {
 						</div>
 					</div>
 				</div>
+				<TimePicker colorPalette="dark"/>
 				<div class="float-left">
 					<form padding-top="20">
 						<div class="form-group row">
 							<label class="col-sm-2 col-form-label" for="fromInput">From:</label>
 							<div class="col-sm-10">
-								<input id="fromInput" class="form-control" type="text" ></input>
 							</div>
 						</div>
 						<div class="form-group row">
@@ -106,12 +111,14 @@ class App extends Component {
 						<button class="btn btn-primary">Submit</button>
 					</form>
 				</div>
-				<h1>Data from /getLuminance</h1>
-				<ul>
-					{this.state.devMonitors.map(devMonitors =>
-						<li key="Temperature">{devMonitors.temperature}</li>
-					)}
+				<h1>Data from /getMonitors</h1>
+				<div>
+					<ul>
+						<li>{this.state.devMonitors.temperature}</li>
+						<li>{this.state.devMonitors.humidity}</li>
+						<li>{this.state.devMonitors.luminance}</li>
 					</ul>
+				</div>
 			</div>
 		);
 	}

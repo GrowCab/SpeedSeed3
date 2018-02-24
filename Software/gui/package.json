@@ -16,7 +16,8 @@
     "react": "^16.2.0",
     "react-d3-basic": "^1.6.11",
     "react-dom": "^16.2.0",
-    "react-scripts": "1.1.0"
+    "react-scripts": "1.1.0",
+    "react-times": "^2.2.8"
   },
   "scripts": {
     "start": "react-scripts start",

@@ -1,21 +1,36 @@
 
+void print_value_float(char * name, float  value){
+  Serial.print("\"");
+  Serial.print(name);
+  Serial.print("\":");
+  Serial.print(isnan(value)? 0 : value);
+}
+
+
+void print_value_bool(char * name, bool  value){
+  Serial.print("\"");
+  Serial.print(name);
+  Serial.print("\":");
+  Serial.print(value);
+}
 
 void status_print(struct CurrentStatus * cs){
-  Serial.print("STATUS=");
-  Serial.print("Humidity: ");
-  Serial.print(cs->humidity);
-  Serial.print("%\tTemperature: ");
-  Serial.print(cs->temperature);
-  Serial.print("\tPeltier cool: ");
-  Serial.print(cs->peltier_cool_status);
-  Serial.print("\tHumidity fan: ");
-  Serial.print(cs->humidity_fan_status);
-  Serial.print("\tMax Humidity: ");
-  Serial.print(cs->max_humidity);
-  Serial.print("\tMax Temp: ");
-  Serial.print(cs->max_tmp);
-  Serial.print("\tMin Temp: ");
-  Serial.print(cs-> min_tmp);
+
+  Serial.print("{\"status\":{");
+  print_value_float("humidity", cs->humidity);
+  Serial.print(",");
+  print_value_float("temperature", cs->temperature);
+  Serial.print(",");
+  print_value_bool("peltier_cool_status", cs->peltier_cool_status);
+    Serial.print(",");
+  print_value_bool("humidity_fan_status", cs->humidity_fan_status);
+    Serial.print(",");
+  print_value_float("max_humidity", cs->max_humidity);
+    Serial.print(",");
+  print_value_float("max_tmp", cs->max_tmp);
+    Serial.print(",");
+  print_value_float("min_tmp", cs->min_tmp);
+  Serial.print("}}");
   Serial.println();
 }
 
@@ -67,8 +82,9 @@ void parse_new_data(struct CurrentStatus * cs) {
     char * strtokIndx; // this is used by strtok() as an index
     strtokIndx = strtok(cs->receivedChars,"=");
     messageFromPC = String(strtokIndx); // copy it to messageFromPC
-    Serial.print("CMD=");
+    Serial.print("{\"CMD\":\"");
     Serial.print(messageFromPC);
+    Serial.print("\"}");
     Serial.println();
     if(messageFromPC == "PRINT"){
       status_print(cs);
@@ -82,8 +98,9 @@ void parse_new_data(struct CurrentStatus * cs) {
       status_print(cs);
     }
     else{
-      Serial.print("ERROR=Unknown command ");
+      Serial.print("{\"ERROR\": \"Unknown command '");
       Serial.print(messageFromPC);
+      Serial.print("'\"}");
       Serial.println();
     }
     cs->new_data = false;

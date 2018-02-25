@@ -88,11 +88,11 @@ void parse_new_data(struct CurrentStatus * cs) {
     Serial.println();
     if(messageFromPC == "PRINT"){
       status_print(cs);
-    }else if(messageFromPC == "MAX_TEMP"){
+    }else if(messageFromPC == "max_tmp"){
       strtokIndx = strtok(NULL, ",");
       cs->max_tmp = atof(strtokIndx);
       status_print(cs);
-    }else if (messageFromPC == "MAX_HUM") {
+    }else if (messageFromPC == "max_humidity") {
       strtokIndx = strtok(NULL, ",");
       cs->max_humidity = atof(strtokIndx);
       status_print(cs);

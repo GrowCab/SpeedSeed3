@@ -3,10 +3,12 @@ import time
 import pymongo
 import json
 import datetime
+import codecs
 
 from pymongo import MongoClient
 from datetime import datetime
 
+reader = codecs.getreader("ascii")
 def findArduino():
     ports = list(serial.tools.list_ports.comports())
     for p in ports:
@@ -18,8 +20,9 @@ def getStatus(current_status):
     arduino.write(message.encode('ascii') )
     data = arduino.readline()
     while data and len(data)>0:
+        print(data)
         try:
-            json_data = json.loads(data)
+            json_data=json.loads(data.decode('utf-8')) 
             if ('status' in json_data):
                 now = datetime.utcnow()
                 status = json_data['status']
@@ -27,7 +30,9 @@ def getStatus(current_status):
                 db.sensors.insert(status)
                 current_status.update(status)
                 print(str(current_status))
-        except:
+        except: 
+            e = sys.exc_info()[0]
+            print(str(e));
             pass
         data = arduino.readline()
 
@@ -52,6 +57,7 @@ def getExpectedStatus():
 
 def setArduinoProperty(setting, value):
     message =  setting + "=" + str(value) + '\n'
+    print(message)
     arduino.write(message.encode('ascii') )
 
 def setExpectedStatus(expected, current):
@@ -96,11 +102,12 @@ default_settings = {
 }
 
 arduino_port = findArduino()
-client = MongoClient('mongodb://192.168.1.76:27017')
+client = MongoClient('mongodb://127.0.0.1:27017')
 db = client['speedseed3']
 
 arduino = serial.Serial(arduino_port[0], 9600, timeout=.1)
 i = 0
+print(arduino_port[0])
 
 current_status = {}
 
@@ -110,7 +117,6 @@ while True:
     i+=1
     if i == 60 or len(current_status) == 0 :
         getStatus(current_status)
-
         i=0
     if len(current_status) > 0 and len(expected_status) > 0:
         setExpectedStatus(expected_status, current_status)

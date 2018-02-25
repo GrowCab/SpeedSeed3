@@ -44,7 +44,7 @@ def getExpectedStatus():
         settings    = last_settings.next()
         temperature = settings["temperature"]
         humidity    = settings["humidity"]
-        light    = settings["light"]
+        light       = settings["light"]
         for t in temperature:
             if t["start_hour"] <= now.hour <= t["end_hour"] and t["start_hour"] <= now.hour <= t["end_hour"]:
                 ret["max_tmp"] = t["max"]
@@ -53,7 +53,7 @@ def getExpectedStatus():
                 ret["max_humidity"] = h["max"]
         for h in light:
             if h["start_hour"] <= now.hour <= h["end_hour"] and h["start_hour"] <= now.hour <= h["end_hour"]:
-                ret["light"] = h["light"]
+                ret["light"] = h["status"]
     except StopIteration:
         default_settings['timestamp'] = now
         db.settings.insert(default_settings)
@@ -61,16 +61,14 @@ def getExpectedStatus():
 
 def setArduinoProperty(setting, value):
     message =  setting + "=" + str(value) + '\n'
-    print(message)
     arduino.write(message.encode('ascii') )
 
 def setExpectedStatus(expected, current):
-    if(current["max_tmp"] != expected["max_tmp"]):
-        setArduinoProperty("max_tmp", expected["max_tmp"])
-        getStatus(current_status)
-    if(current["max_humidity"] != expected["max_humidity"]):
-        setArduinoProperty("max_humidity", expected["max_humidity"])
-        getStatus(current_status)
+    for prop in ["max_tmp", "max_humidity", "light"]:
+        if(current[prop] != expected[prop]):
+            setArduinoProperty(prop, expected[prop])
+            getStatus(current_status)
+
 
 
 

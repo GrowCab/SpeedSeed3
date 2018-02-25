@@ -51,7 +51,7 @@ void status_stop_cool(struct CurrentStatus * cs){
   relay_off(PIN_PELTIER);
   fan_set_speed(PIN_FAN_INSIDE, 255);
   fan_set_speed(PIN_FAN_OUTSIDE, 255);
-  cs->peltier_cool_status = true;
+  cs->peltier_cool_status = false;
 }
 
 

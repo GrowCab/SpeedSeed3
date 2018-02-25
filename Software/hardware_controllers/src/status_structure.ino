@@ -22,14 +22,16 @@ void status_print(struct CurrentStatus * cs){
   print_value_float("temperature", cs->temperature);
   Serial.print(",");
   print_value_bool("peltier_cool_status", cs->peltier_cool_status);
-    Serial.print(",");
+  Serial.print(",");
   print_value_bool("humidity_fan_status", cs->humidity_fan_status);
-    Serial.print(",");
+  Serial.print(",");
   print_value_float("max_humidity", cs->max_humidity);
-    Serial.print(",");
+  Serial.print(",");
   print_value_float("max_tmp", cs->max_tmp);
-    Serial.print(",");
+  Serial.print(",");
   print_value_float("min_tmp", cs->min_tmp);
+  Serial.print(",");
+  print_value_bool("light", cs->light);
   Serial.print("}}");
   Serial.println();
 }
@@ -39,12 +41,23 @@ void status_read_environment(struct CurrentStatus * cs){
   cs->temperature = dht_temperature();
 }
 
+void status_start_light(struct CurrentStatus * cs){
+  relay_on(PIN_LIGHT);
+  cs->light = true;
+}
+
+void status_stop_light(struct CurrentStatus * cs){
+  relay_off(PIN_LIGHT);
+  cs->light = false;
+}
+
+
+
 void status_start_cool(struct CurrentStatus * cs){
   relay_on(PIN_PELTIER);
   fan_set_speed(PIN_FAN_INSIDE, 0);
   fan_set_speed(PIN_FAN_OUTSIDE, 0);
   cs->peltier_cool_status = true;
-
 }
 
 void status_stop_cool(struct CurrentStatus * cs){
@@ -53,7 +66,6 @@ void status_stop_cool(struct CurrentStatus * cs){
   fan_set_speed(PIN_FAN_OUTSIDE, 255);
   cs->peltier_cool_status = false;
 }
-
 
 void recvWithEndMarker(struct CurrentStatus * cs) {
   static byte ndx = 0;
@@ -86,6 +98,7 @@ void parse_new_data(struct CurrentStatus * cs) {
     Serial.print(messageFromPC);
     Serial.print("\"}");
     Serial.println();
+    int tmp_val;
     if(messageFromPC == "PRINT"){
       status_print(cs);
     }else if(messageFromPC == "max_tmp"){
@@ -95,6 +108,11 @@ void parse_new_data(struct CurrentStatus * cs) {
     }else if (messageFromPC == "max_humidity") {
       strtokIndx = strtok(NULL, ",");
       cs->max_humidity = atof(strtokIndx);
+      status_print(cs);
+    }else if (messageFromPC == "light") {
+      strtokIndx = strtok(NULL, ",");
+      tmp_val = atoi(strtokIndx);
+      cs->next_light = tmp_val > 0;
       status_print(cs);
     }
     else{
@@ -118,7 +136,15 @@ void status_control_temperature(struct CurrentStatus * cs){
   }
 }
 
-
+void status_control_light(struct CurrentStatus * cs){
+  if(cs->next_light != cs->light){
+    if(cs->next_light){
+      status_start_light(cs);
+    }else{
+      status_stop_light(cs);
+    }
+  }
+}
 
 void status_control_humidity(struct CurrentStatus * cs){
   cs->next_humidity_fan_status = cs->humidity > cs->max_humidity;

@@ -9,11 +9,13 @@ typedef struct CurrentStatus
    float fan2_hz;
    float max_tmp;
    float min_tmp;
+   float max_humidity;
    bool peltier_cool_status;
    bool next_peltier_cool_status;
    bool new_data;
    bool humidity_fan_status;
    bool next_humidity_fan_status;
-   float max_humidity;
+   bool light;
+   bool next_light;
 
 } current_status ;

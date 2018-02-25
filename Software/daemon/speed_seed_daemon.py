@@ -22,7 +22,7 @@ def getStatus(current_status):
     while data and len(data)>0:
         print(data)
         try:
-            json_data=json.loads(data.decode('utf-8')) 
+            json_data=json.loads(data.decode('utf-8'))
             if ('status' in json_data):
                 now = datetime.utcnow()
                 status = json_data['status']
@@ -30,7 +30,7 @@ def getStatus(current_status):
                 db.sensors.insert(status)
                 current_status.update(status)
                 print(str(current_status))
-        except: 
+        except:
             e = sys.exc_info()[0]
             print(str(e));
             pass
@@ -44,12 +44,16 @@ def getExpectedStatus():
         settings    = last_settings.next()
         temperature = settings["temperature"]
         humidity    = settings["humidity"]
+        light    = settings["light"]
         for t in temperature:
             if t["start_hour"] <= now.hour <= t["end_hour"] and t["start_hour"] <= now.hour <= t["end_hour"]:
                 ret["max_tmp"] = t["max"]
         for h in humidity:
             if h["start_hour"] <= now.hour <= h["end_hour"] and h["start_hour"] <= now.hour <= h["end_hour"]:
                 ret["max_humidity"] = h["max"]
+        for h in light:
+            if h["start_hour"] <= now.hour <= h["end_hour"] and h["start_hour"] <= now.hour <= h["end_hour"]:
+                ret["light"] = h["light"]
     except StopIteration:
         default_settings['timestamp'] = now
         db.settings.insert(default_settings)
@@ -98,6 +102,20 @@ default_settings = {
         'end_hour': 24,
         'end_min': 0,
         'max': 60.0
+    }],
+    'light': [{
+        'start_hour': 0,
+        'start_min': 0,
+        'end_hour': 4,
+        'end_min': 0,
+        'status': 0
+    },
+    {
+        'start_hour': 4,
+        'start_min': 0,
+        'end_hour': 24,
+        'end_min': 0,
+        'status': 1
     }]
 }
 

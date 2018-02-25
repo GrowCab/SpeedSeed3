@@ -30,9 +30,13 @@ def getStatus(current_status):
                 db.sensors.insert(status)
                 current_status.update(status)
                 print(str(current_status))
+            if('ERROR' in json_data):
+                now = datetime.utcnow()
+                status = json_data['ERROR']
+                status['timestamp'] = now
+                db.errors.insert(status)
         except:
-            e = sys.exc_info()[0]
-            print(str(e));
+            db.errors.insert({"parse_error":data.decode('utf-8')})
             pass
         data = arduino.readline()
 

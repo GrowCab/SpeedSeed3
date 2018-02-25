@@ -10,6 +10,7 @@ typedef struct CurrentStatus
    float max_tmp;
    float min_tmp;
    float max_humidity;
+   int visible_lux;
    bool peltier_cool_status;
    bool next_peltier_cool_status;
    bool new_data;

@@ -6,6 +6,13 @@ void print_value_float(char * name, float  value){
   Serial.print(isnan(value)? 0 : value);
 }
 
+void print_value_int(char * name, int  value){
+  Serial.print("\"");
+  Serial.print(name);
+  Serial.print("\":");
+  Serial.print(isnan(value)? 0 : value);
+}
+
 
 void print_value_bool(char * name, bool  value){
   Serial.print("\"");
@@ -32,6 +39,8 @@ void status_print(struct CurrentStatus * cs){
   print_value_float("min_tmp", cs->min_tmp);
   Serial.print(",");
   print_value_bool("light", cs->light);
+  Serial.print(",");
+  print_value_int("visible_lux", cs->visible_lux);
   Serial.print("}}");
   Serial.println();
 }
@@ -144,6 +153,7 @@ void status_control_light(struct CurrentStatus * cs){
       status_stop_light(cs);
     }
   }
+  cs->visible_lux = TSL2561.readVisibleLux();
 }
 
 void status_control_humidity(struct CurrentStatus * cs){

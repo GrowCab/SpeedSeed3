@@ -1,5 +1,6 @@
 #include <DHT.h>
-
+#include <Wire.h>
+#include <Digital_Light_TSL2561.h>
 
 //Pin 14 is A0
 //Pin 15 is A1
@@ -31,9 +32,11 @@ struct CurrentStatus cs;
 
 void setup() {
   Serial.begin(9600);
+  Wire.begin();
   relay_setup(PIN_PELTIER);
   relay_setup(PIN_HUMIDITY_FAN);
   relay_setup(PIN_LIGHT);
+  TSL2561.init();
 
   cs.humidity = 0;
   cs.temperature = 0;
@@ -52,6 +55,7 @@ void setup() {
 }
 
 void loop() {
+  delay(1000);
   status_read_environment(&cs);
   status_control_temperature(&cs);
   status_control_humidity(&cs);

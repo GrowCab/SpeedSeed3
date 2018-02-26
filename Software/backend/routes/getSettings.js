@@ -4,10 +4,11 @@ var fs = require("fs");
 var mongojs = require("mongojs")
 
 /* SET settings listing. */
-router.post('/', function(req, res, next) {
-  console.log(req.body);
-  var myJson = JSON.stringify(req.body);
-  console.log(myJson);
+router.get('/', function(req, res, next) {
+  var myJson = [
+    {id: 1, value:"120"},
+    {id: 2, value:"100"},
+  ];
   var uri = "mongodb://192.168.1.76:27017/speedseed3",
   db = mongojs(uri, ["testing"]);
 
@@ -19,8 +20,11 @@ router.post('/', function(req, res, next) {
   console.log('database connected')
   })
 
-  db.testing.save({myJson})
-  res.json(myJson);
+  db.testing.find().limit(1).sort({$natural:-1}).toArray(function(err, result) {
+      if (err) throw err;
+      console.log(result);
+      res.json(result);
+  });
 });
 
 module.exports = router;

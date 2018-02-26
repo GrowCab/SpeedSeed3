@@ -9,6 +9,7 @@ var index = require('./routes/index');
 var users = require('./routes/users');
 var getMonitors = require('./routes/getMonitors');
 var setSettings = require('./routes/setSettings');
+var getSettings = require('./routes/getSettings');
 
 var app = express();
 
@@ -28,6 +29,7 @@ app.use('/', index);
 app.use('/users', users);
 app.use('/getMonitors', getMonitors);
 app.use('/setSettings', setSettings);
+app.use('/getSettings', getSettings);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

@@ -64,7 +64,7 @@ class DialSetting extends Arc {
               {super.render()}
               <text transform={labelTranslate}
                     textAnchor="middle">
-                  {this.props.data.data.label}
+                  {this.props.data.data.label} {this.props.unit}
               </text>
           </g>
       );

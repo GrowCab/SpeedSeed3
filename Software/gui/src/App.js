@@ -1,40 +1,80 @@
 import React, { Component } from "react";
-import TimePicker from 'react-times';
 import logo from "./logo.svg";
 import "./App.css";
 import DialControl from "./components/DialControl";
-// use material theme
-import 'react-times/css/material/default.css';
-// or you can use classic theme
-import 'react-times/css/classic/default.css';
+import ConfigForm from "./components/ConfigForm";
 
 class App extends Component {
-	state = {
-		devMonitors: [],
-		tempSettings: [],
-		humSettings: [],
-		lumSettings: [],
-	}
 	constructor(props) {
 		super(props);
+		this.state = {
+			devMonitors: "",
+			settings: {
+				"temperature": [
+					{value: 10, label: "-2"},
+					{value: 30, label: "16"},
+					{value: 80, label: "30"}],
+				"humidity": [
+					{value: 20, label: "20"},
+					{value: 30, label: "25"},
+					{value: 45, label: "45"},
+					{value: 50, label: "60"}, 	
+					{value: 80, label: "40"}],
+				"lights": [
+					{value: 30, label: "5"},
+					{value: 90, label: "100"},
+					{value: 100, label: "20"}]
+			},
+		}
+	
 		this.pAngle = 0.012;
 		this.width = 300;
 		this.height = 300;
+
+		this.getItems = this.getItems.bind(this);
+		this.sendSettings = this.sendSettings.bind(this);
 	}
 
 	componentDidMount(){
-		this.timer = setInterval(()=> this.getItems(), 5000);
+		this.timer = setInterval(()=> this.getItems(), 7000);
+		// fetch('/getSettings')
+		// .then(res => res.json())
+		// .then(settings => this.setState({settings}))
 	}
 	getItems() {
 		fetch('/getMonitors')
 		.then(res => res.json())
 		.then(devMonitors => this.setState({devMonitors}));
-	  }
+		var tst=[
+			{value: 40, label: "-2"},
+			{value: 5, label: "16"},
+			{value: 10, label: "30"}];
+		console.log(tst);
+		tst.sort(function(a,b) {return a.value < b.value;});
+		console.log(tst);
+
+	}
 	
 	componentWillUnmount() {
 		this.timer = null;
-	  }
-	
+	}
+
+	sendSettings() {
+		var data= JSON.stringify( this.state.settings );
+		console.log(data);
+		fetch('/setSettings', {
+			method: "POST",
+			headers: {
+				'Accept': 'application/json',
+				'Content-Type': 'application/json',
+			},
+			body: data
+		})
+		.then(function(res){ return res.json(); })
+		.then(function(data){ alert( JSON.stringify( data ) ) })
+		
+	}
+
 	render() {
 		return (
 			<div className="App">
@@ -46,70 +86,29 @@ class App extends Component {
 					<div class="row">
 						<div class="col-sm-4">
 							<svg height={this.height} width={this.width}>
-								<DialControl currentValue={this.state.devMonitors.temperature} x={100} y={100} outerRadius={100} innerRadius={50} padAngle={this.pAngle} 
-									data={
-										[
-											{value: 10, label: "-2 C"},
-											{value: 30, label: "16 C"},
-											{value: 80, label: "30 C"}
-										]
-									}
+								<DialControl unit="C" currentValue={this.state.devMonitors.temperature} x={100} y={100} outerRadius={100} innerRadius={50} padAngle={this.pAngle} 
+									data={this.state.settings.temperature}
 								/>
 							</svg>
 						</div>
 						<div class="col-sm-4">
 							<svg height={this.height} width={this.width}>
-								<DialControl currentValue={this.state.devMonitors.luminance} x={100} y={100} outerRadius={100} innerRadius={50} padAngle={this.pAngle}
-									data={
-										[
-											{value: 30, label: "5 lum"},
-											{value: 90, label: "100 lum"},
-											{value: 100, label: "20 lum"}
-										]
-									}
+								<DialControl unit="lum" currentValue={this.state.devMonitors.luminance} x={100} y={100} outerRadius={100} innerRadius={50} padAngle={this.pAngle}
+									data={this.state.settings.lights}
 								/>
 							</svg>
 						</div>
 						<div class="col-sm-4">
 							<svg height={this.height} width={this.width}>
-								<DialControl currentValue={this.state.devMonitors.humidity} x={100} y={100} outerRadius={100} innerRadius={50} padAngle={this.pAngle}
-									data={
-										[
-											{value: 20, label: "20 %"},
-											{value: 30, label: "25 %"},
-											{value: 45, label: "45 %"},
-											{value: 50, label: "60 %"},
-											{value: 80, label: "40 %"}
-										]
-									}
+								<DialControl unit="%" currentValue={this.state.devMonitors.humidity} x={100} y={100} outerRadius={100} innerRadius={50} padAngle={this.pAngle}
+									data={this.state.settings.humidity}
 								/>
 							</svg>
 						</div>
 					</div>
 				</div>
-				<TimePicker colorPalette="dark"/>
-				<div class="float-left">
-					<form padding-top="20">
-						<div class="form-group row">
-							<label class="col-sm-2 col-form-label" for="fromInput">From:</label>
-							<div class="col-sm-10">
-							</div>
-						</div>
-						<div class="form-group row">
-							<label class="col-sm-2 col-form-label"  for="toInput">To:</label>
-							<div class="col-sm-10">
-								<input id="toInput" class="form-control" type="text"></input>
-							</div>
-						</div>
-						<div class="form-group row">
-							<label class="col-sm-2 col-form-label" for="valueInput">Value:</label>
-							<div class="col-sm-10">
-								<input id="valueInput" class="form-control" type="text"></input>
-							</div>
-						</div>
-						<button class="btn btn-primary">Submit</button>
-					</form>
-				</div>
+				<button onClick={this.sendSettings} class="btn btn-primary">Submit</button>
+				<ConfigForm/>
 			</div>
 		);
 	}

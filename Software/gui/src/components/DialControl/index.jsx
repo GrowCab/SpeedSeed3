@@ -9,12 +9,14 @@ class DialControl extends Component {
 	constructor() {
 		super();
 		this.pie = pie().value((d) => d.value);
+
 		this.colors = scale.scaleOrdinal(scale.schemeCategory20);
 	}
-	arcGenerator(d, i) {
+	arcGenerator(d, u, i) {
 		return (
 			<DialSetting key={`arc-${i}`}
 				data={d}
+				unit={u}
 				innerRadius={this.props.innerRadius}
 				outerRadius={this.props.outerRadius}
 				padAngle={this.props.padAngle}
@@ -28,7 +30,7 @@ class DialControl extends Component {
 
 		return (
 			<g transform={translate}>
-				{pie.map((d, i) => this.arcGenerator(d, i))}
+				{pie.map((d, i) => this.arcGenerator(d, this.props.unit, i))}
 				<text textAnchor="middle">{this.props.currentValue}</text>
 			</g>
 		);

@@ -19,8 +19,9 @@ def getStatus(current_status):
     message = "PRINT=" + '\n'
     arduino.write(message.encode('ascii') )
     data = arduino.readline()
+    print(data)
     while data and len(data)>0:
-        print(data)
+        
         try:
             json_data=json.loads(data.decode('utf-8'))
             if ('status' in json_data):
@@ -41,10 +42,9 @@ def getStatus(current_status):
             default_settings = {
                 "ERROR": "Unable to parse " + data,
                 "timestamp" : datetime.utcnow()
-                }
             }
-             print( "ERROR")
-             pass
+            print( "ERROR")
+            pass
         data = arduino.readline()
 
 def getExpectedStatus():
@@ -53,6 +53,7 @@ def getExpectedStatus():
     ret = {}
     try:
         settings    = last_settings.next()
+        #print(str(settings))
         temperature = settings["temperature"]
         humidity    = settings["humidity"]
         light       = settings["light"]
@@ -129,9 +130,8 @@ default_settings = {
 }
 
 arduino_port = findArduino()
-username="admin"
-password="phenotipi"
-client = MongoClient('mongodb://%s:%s@127.0.0.1:27017' % (username, password))
+
+client = MongoClient('mongodb://127.0.0.1:27017')
 db = client['speedseed3']
 print(str(db))
 time.sleep(1)

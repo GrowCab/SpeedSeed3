@@ -41,15 +41,18 @@ void status_print(struct CurrentStatus * cs){
   print_value_bool("light", cs->light);
   Serial.print(",");
   print_value_int("visible_lux", cs->visible_lux);
+  Serial.print(",");
+  print_value_int("missed_temp_reads", cs->missed_temp_reads);
   Serial.print("}}");
+
   Serial.println();
 }
 
 void status_read_environment(struct CurrentStatus * cs){
   float hum = dht_humidity();
   float temp = dht_temperature();
-  if(hum == 0 || temp == 0){
-    cs-> missed_temp_reads++;
+  if(isnan(hum) || isnan(temp)){
+    cs-> missed_temp_reads = cs-> missed_temp_reads + 1;
   }else{
     cs->humidity = hum;
     cs->temperature = temp;
@@ -107,7 +110,8 @@ void recvWithEndMarker(struct CurrentStatus * cs) {
 
 void print_sensor_error(struct CurrentStatus * cs){
   if(cs->missed_temp_reads > 10){
-    Serial.println("{\"ERROR\": \" Temperature not read \"");
+    Serial.print("{\"ERROR\": \" Temperature not read \"}");
+    Serial.println();
     cs->missed_temp_reads = 0;
   }
 }

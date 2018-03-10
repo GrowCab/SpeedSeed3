@@ -34,8 +34,8 @@ def getStatus(current_status):
             if('ERROR' in json_data):
                 now = datetime.utcnow()
                 status = json_data['ERROR']
-                status['timestamp'] = now
-                db.errors.insert(status)
+                json_data['timestamp'] = now
+                db.errors.insert(json_data)
             else:
                 print(str(json_data))
         except:

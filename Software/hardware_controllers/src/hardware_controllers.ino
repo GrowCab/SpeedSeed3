@@ -53,13 +53,13 @@ void setup() {
   cs.light = false;
   cs.next_light = false;
   cs.started_up = false;
-  cs.missed_temp_reads = 0; 
+  cs.missed_temp_reads = 0;
   while(Serial.available())
     Serial.read();
 }
 
 void loop() {
-  delay(1000);
+  delay(5000);
   status_read_environment(&cs);
   status_control_temperature(&cs);
   status_control_humidity(&cs);

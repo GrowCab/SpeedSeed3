@@ -35,9 +35,16 @@ def getStatus(current_status):
                 status = json_data['ERROR']
                 status['timestamp'] = now
                 db.errors.insert(status)
+            else:
+                print(str(json_data))
         except:
-            db.errors.insert({"parse_error":data.decode('utf-8')})
-            pass
+            default_settings = {
+                "ERROR": "Unable to parse " + data,
+                "timestamp" : datetime.utcnow()
+                }
+            }
+             print( "ERROR")
+             pass
         data = arduino.readline()
 
 def getExpectedStatus():
@@ -65,6 +72,7 @@ def getExpectedStatus():
 
 def setArduinoProperty(setting, value):
     message =  setting + "=" + str(value) + '\n'
+    print(message)
     arduino.write(message.encode('ascii') )
 
 def setExpectedStatus(expected, current):
@@ -72,7 +80,6 @@ def setExpectedStatus(expected, current):
         if(current[prop] != expected[prop]):
             setArduinoProperty(prop, expected[prop])
             getStatus(current_status)
-
 
 
 
@@ -122,10 +129,14 @@ default_settings = {
 }
 
 arduino_port = findArduino()
-client = MongoClient('mongodb://127.0.0.1:27017')
+username="admin"
+password="phenotipi"
+client = MongoClient('mongodb://%s:%s@127.0.0.1:27017' % (username, password))
 db = client['speedseed3']
-
-arduino = serial.Serial(arduino_port[0], 9600, timeout=.1)
+print(str(db))
+time.sleep(1)
+print("Connecting to arduino")
+arduino = serial.Serial(arduino_port[0], 9600, timeout=1)
 i = 0
 print(arduino_port[0])
 

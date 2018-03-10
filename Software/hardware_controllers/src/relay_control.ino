@@ -4,9 +4,9 @@ void relay_setup(int port){
 }
 
 void relay_on(int port){
-  digitalWrite(port, LOW);
+  digitalWrite(port, HIGH);
 }
 
 void relay_off(int port){
-  digitalWrite(port, HIGH);
+  digitalWrite(port, LOW);
 }

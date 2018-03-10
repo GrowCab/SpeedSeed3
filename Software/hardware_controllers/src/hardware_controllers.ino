@@ -52,6 +52,9 @@ void setup() {
   cs.new_data  =  false;
   cs.light = false;
   cs.next_light = false;
+  cs.started_up = false;
+  while(Serial.available())
+    Serial.read();
 }
 
 void loop() {
@@ -60,6 +63,7 @@ void loop() {
   status_control_temperature(&cs);
   status_control_humidity(&cs);
   status_control_light(&cs);
+  cs.started_up = true;
 
   if (Serial.available() > 0) {
     recvWithEndMarker(&cs);

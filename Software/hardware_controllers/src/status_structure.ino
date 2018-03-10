@@ -113,15 +113,18 @@ void parse_new_data(struct CurrentStatus * cs) {
     }else if(messageFromPC == "max_tmp"){
       strtokIndx = strtok(NULL, ",");
       cs->max_tmp = atof(strtokIndx);
+      cs->started_up = false;
       status_print(cs);
     }else if (messageFromPC == "max_humidity") {
       strtokIndx = strtok(NULL, ",");
       cs->max_humidity = atof(strtokIndx);
+      cs->started_up = false;
       status_print(cs);
     }else if (messageFromPC == "light") {
       strtokIndx = strtok(NULL, ",");
       tmp_val = atoi(strtokIndx);
       cs->next_light = tmp_val > 0;
+      cs->started_up = false;
       status_print(cs);
     }
     else{
@@ -136,7 +139,7 @@ void parse_new_data(struct CurrentStatus * cs) {
 
 void status_control_temperature(struct CurrentStatus * cs){
   cs->next_peltier_cool_status = cs->temperature > cs->max_tmp;
-  if(cs->peltier_cool_status != cs->next_peltier_cool_status){
+  if( !cs->started_up || cs->peltier_cool_status != cs->next_peltier_cool_status){
     if(cs->next_peltier_cool_status){
       status_start_cool(cs);
     }else{
@@ -146,7 +149,7 @@ void status_control_temperature(struct CurrentStatus * cs){
 }
 
 void status_control_light(struct CurrentStatus * cs){
-  if(cs->next_light != cs->light){
+  if(!cs->started_up || cs->next_light != cs->light){
     if(cs->next_light){
       status_start_light(cs);
     }else{
@@ -158,7 +161,7 @@ void status_control_light(struct CurrentStatus * cs){
 
 void status_control_humidity(struct CurrentStatus * cs){
   cs->next_humidity_fan_status = cs->humidity > cs->max_humidity;
-  if(cs->humidity_fan_status != cs->next_humidity_fan_status){
+  if(!cs->started_up || cs->humidity_fan_status != cs->next_humidity_fan_status){
     if(cs->next_humidity_fan_status){
       relay_on(PIN_HUMIDITY_FAN);
       cs->humidity_fan_status = true;

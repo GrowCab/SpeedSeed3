@@ -18,5 +18,6 @@ typedef struct CurrentStatus
    bool next_humidity_fan_status;
    bool light;
    bool next_light;
+   bool started_up;
 
 } current_status ;

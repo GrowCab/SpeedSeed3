@@ -46,8 +46,16 @@ void status_print(struct CurrentStatus * cs){
 }
 
 void status_read_environment(struct CurrentStatus * cs){
-  cs->humidity = dht_humidity();
-  cs->temperature = dht_temperature();
+  float hum = dht_humidity();
+  float temp = dht_temperature();
+  if(hum == 0 || temp == 0){
+    cs-> missed_temp_reads++;
+  }else{
+    cs->humidity = hum;
+    cs->temperature = temp;
+    cs-> missed_temp_reads = 0;
+  }
+
 }
 
 void status_start_light(struct CurrentStatus * cs){
@@ -97,6 +105,13 @@ void recvWithEndMarker(struct CurrentStatus * cs) {
   }
 }
 
+void print_sensor_error(struct CurrentStatus * cs){
+  if(cs->missed_temp_reads > 10){
+    Serial.println("{\"ERROR\": \" Temperature not read \"");
+    cs->missed_temp_reads = 0;
+  }
+}
+
 void parse_new_data(struct CurrentStatus * cs) {
   if (cs->new_data == true) {
     String messageFromPC;
@@ -109,6 +124,7 @@ void parse_new_data(struct CurrentStatus * cs) {
     Serial.println();
     int tmp_val;
     if(messageFromPC == "PRINT"){
+      print_sensor_error(cs);
       status_print(cs);
     }else if(messageFromPC == "max_tmp"){
       strtokIndx = strtok(NULL, ",");

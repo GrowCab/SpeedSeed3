@@ -53,6 +53,7 @@ void setup() {
   cs.light = false;
   cs.next_light = false;
   cs.started_up = false;
+  cs.missed_temp_reads = 0; 
   while(Serial.available())
     Serial.read();
 }

@@ -4,11 +4,13 @@ import pymongo
 import json
 import datetime
 import codecs
+import sys 
 
 from pymongo import MongoClient
 from datetime import datetime
+import daemon 
 
-reader = codecs.getreader("ascii")
+
 def findArduino():
     ports = list(serial.tools.list_ports.comports())
     for p in ports:
@@ -16,6 +18,8 @@ def findArduino():
             return p
 
 def getStatus(current_status):
+    global db
+    global arduino
     message = "PRINT=" + '\n'
     arduino.write(message.encode('ascii') )
     data = arduino.readline()
@@ -48,6 +52,7 @@ def getStatus(current_status):
         data = arduino.readline()
 
 def getExpectedStatus():
+    global db
     last_settings = db.settings.find().sort([("timestamp", pymongo.DESCENDING)]).limit(1)
     now = datetime.utcnow()
     ret = {}
@@ -84,12 +89,20 @@ def setExpectedStatus(expected, current):
             setArduinoProperty(prop, expected[prop])
             changed = True
     if changed:
-        getStatus(current_status)
+        getStatus(current)
 
+def ardunicoConnect():
+    global arduino
+    arduino_port = findArduino()
 
+    print("Connecting to arduino")
+    print(arduino_port[0])
+    arduino = serial.Serial(arduino_port[0], 9600, timeout=1)
 
-default_settings = {
-    'temperature': [{
+def run():
+    global db
+    default_settings = {
+        'temperature': [{
         'start_hour': 0,
         'start_min': 0,
         'end_hour': 5,
@@ -131,27 +144,27 @@ default_settings = {
         'end_min': 0,
         'status': 1
     }]
-}
+    }
 
-arduino_port = findArduino()
-
-client = MongoClient('mongodb://127.0.0.1:27017')
-db = client['speedseed3']
-print(str(db))
-time.sleep(1)
-print("Connecting to arduino")
-arduino = serial.Serial(arduino_port[0], 9600, timeout=1)
-i = 0
-print(arduino_port[0])
-
-current_status = {}
-
-while True:
+    reader = codecs.getreader("ascii")
+    
+    client = MongoClient('mongodb://127.0.0.1:27017')
+    db = client['speedseed3']
+    print(str(db))
     time.sleep(1)
-    expected_status = getExpectedStatus()
-    i+=1
-    if i == 60 or len(current_status) == 0 :
-        getStatus(current_status)
-        i=0
-    if len(current_status) > 0 and len(expected_status) > 0:
-        setExpectedStatus(expected_status, current_status)
+    ardunicoConnect()
+    i = 0
+    current_status = {}
+
+    while True:
+        time.sleep(1)
+        expected_status = getExpectedStatus()
+        i+=1
+        if i == 60 or len(current_status) == 0 :
+            getStatus(current_status)
+            i=0
+        if len(current_status) > 0 and len(expected_status) > 0:
+            setExpectedStatus(expected_status, current_status)
+
+
+run()

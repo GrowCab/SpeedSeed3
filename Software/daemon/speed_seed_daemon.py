@@ -27,6 +27,8 @@ def arduinoReset():
     arduino = serial.Serial(arduino_port[0], 1200, timeout=1)
     arduino.close()
     arduinoConnect()
+    expected_status = getExpectedStatus()
+    setExpectedStatus(expected_status, current_status)
 
 def getStatus(current_status):
     global db

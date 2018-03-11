@@ -10,17 +10,20 @@
 
 #include "datastructures.h"
 
-#define PIN_PELTIER      5 //Relay Shield (3)
+#define PIN_PELTIER_1      4 //Relay Shield (4)
+#define PIN_PELTIER_2      5 //Relay Shield (3)
 #define PIN_HUMIDITY_FAN 6 //Relay Shield (2)
-#define PIN_LIGHT        7 //Relay Shield (1)
+#define PIN_PELTIER_3      7 //Relay Shield (1)
+#define PIN_LIGHT        8
 
 #define PIN_TMP_SENSOR   A2 //A2
-#define PIN_FAN_PULSE_INSIDE   A0
-#define PIN_FAN_PULSE_OUTSIDE  A1
+//#define PIN_FAN_PULSE_INSIDE   A0
+//#define PIN_FAN_PULSE_OUTSIDE  A1
+
 #define PIN_FAN_INSIDE   A3
 #define PIN_FAN_OUTSIDE  A4
 
-#define MAX_TEMPERATURE 25
+#define MAX_TEMPERATURE 30
 #define MAX_HUMIDITY 70.0
 
 #define LOOP_WAIT 10000
@@ -34,7 +37,9 @@ struct CurrentStatus cs;
 void setup() {
   Serial.begin(9600);
   Wire.begin();
-  relay_setup(PIN_PELTIER);
+  relay_setup(PIN_PELTIER_1);
+  relay_setup(PIN_PELTIER_2);
+  relay_setup(PIN_PELTIER_3);
   relay_setup(PIN_HUMIDITY_FAN);
   relay_setup(PIN_LIGHT);
   TSL2561.init();

@@ -51,6 +51,7 @@ void status_print(struct CurrentStatus * cs){
   Serial.print("}}");
 
   Serial.println();
+  Serial.flush();
 }
 
 void status_read_environment(struct CurrentStatus * cs){
@@ -80,14 +81,18 @@ void status_stop_light(struct CurrentStatus * cs){
 
 
 void status_start_cool(struct CurrentStatus * cs){
-  relay_on(PIN_PELTIER);
+  relay_on(PIN_PELTIER_1);
+  relay_on(PIN_PELTIER_2);
+  relay_on(PIN_PELTIER_3);
   fan_set_speed(PIN_FAN_INSIDE, 0);
   fan_set_speed(PIN_FAN_OUTSIDE, 0);
   cs->peltier_cool_status = true;
 }
 
 void status_stop_cool(struct CurrentStatus * cs){
-  relay_off(PIN_PELTIER);
+  relay_off(PIN_PELTIER_1);
+  relay_off(PIN_PELTIER_2);
+  relay_off(PIN_PELTIER_3);
   fan_set_speed(PIN_FAN_INSIDE, 255);
   fan_set_speed(PIN_FAN_OUTSIDE, 255);
   cs->peltier_cool_status = false;
@@ -118,11 +123,13 @@ void print_sensor_error(struct CurrentStatus * cs){
   if(cs->missed_temp_reads > 20){
     Serial.print("{\"ERROR\": \" Temperature not read \"}");
     Serial.println();
+      Serial.flush();
     cs->missed_temp_reads = 0;
   }
   if(cs->missed_lux_reads > 20){
     Serial.print("{\"ERROR\": \" Lux not read \"}");
     Serial.println();
+      Serial.flush();
     cs->missed_temp_reads = 0;
   }
 }
@@ -137,6 +144,7 @@ void parse_new_data(struct CurrentStatus * cs) {
     Serial.print(messageFromPC);
     Serial.print("\"}");
     Serial.println();
+    Serial.flush();
     int tmp_val;
     if(messageFromPC == "PRINT"){
       print_sensor_error(cs);
@@ -163,6 +171,7 @@ void parse_new_data(struct CurrentStatus * cs) {
       Serial.print(messageFromPC);
       Serial.print("'\"}");
       Serial.println();
+      Serial.flush();
     }
     status_clear_in_buffer();
     cs->new_data = false;

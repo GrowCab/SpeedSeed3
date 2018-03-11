@@ -19,6 +19,7 @@ def findArduino():
 
 def arduinoReset():
     global arduino
+    global current_status
     arduino.close()
     arduino_port = findArduino()
 
@@ -28,6 +29,7 @@ def arduinoReset():
     arduino.close()
     arduinoConnect()
     expected_status = getExpectedStatus()
+    
     setExpectedStatus(expected_status, current_status)
 
 def getStatus(current_status):
@@ -38,7 +40,7 @@ def getStatus(current_status):
     arduino.write(message.encode('ascii') )
     data = arduino.readline()
 
-    print( "(%i)%s" , attemps , data)
+    print(attemps , data)
     attemps += 1
     while data and len(data)>0:
         attemps = 0
@@ -60,7 +62,7 @@ def getStatus(current_status):
                 print(str(json_data))
         except:
             default_settings = {
-                "ERROR": "Unable to parse " + data,
+                "ERROR": "Unable to parse " + str(data),
                 "timestamp" : datetime.utcnow()
             }
             print( "ERROR")
@@ -120,6 +122,7 @@ def arduinoConnect():
 def run():
     global db
     global attemps
+    global current_status
     default_settings = {
         'temperature': [{
         'start_hour': 0,

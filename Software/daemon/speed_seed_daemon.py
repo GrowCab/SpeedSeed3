@@ -17,15 +17,29 @@ def findArduino():
         if "Arduino" in p[1]:
             return p
 
+def arduinoReset():
+    global arduino
+    arduino.close()
+    arduino_port = findArduino()
+
+    print("Reseting to arduino")
+    print(arduino_port[0])
+    arduino = serial.Serial(arduino_port[0], 1200, timeout=1)
+    arduino.close()
+    arduinoConnect()
+
 def getStatus(current_status):
     global db
     global arduino
+    global attemps
     message = "PRINT=" + '\n'
     arduino.write(message.encode('ascii') )
     data = arduino.readline()
-    print(data)
+
+    print( "(%i)%s" , attemps , data)
+    attemps += 1
     while data and len(data)>0:
-        
+        attemps = 0
         try:
             json_data=json.loads(data.decode('ascii'))
             if ('status' in json_data):
@@ -50,6 +64,8 @@ def getStatus(current_status):
             print( "ERROR")
             pass
         data = arduino.readline()
+    if (attemps > 10):
+        arduinoReset()
 
 def getExpectedStatus():
     global db
@@ -91,7 +107,7 @@ def setExpectedStatus(expected, current):
     if changed:
         getStatus(current)
 
-def ardunicoConnect():
+def arduinoConnect():
     global arduino
     arduino_port = findArduino()
 
@@ -101,6 +117,7 @@ def ardunicoConnect():
 
 def run():
     global db
+    global attemps
     default_settings = {
         'temperature': [{
         'start_hour': 0,
@@ -152,10 +169,10 @@ def run():
     db = client['speedseed3']
     print(str(db))
     time.sleep(1)
-    ardunicoConnect()
+    arduinoConnect()
     i = 0
     current_status = {}
-
+    attemps = 0
     while True:
         time.sleep(1)
         expected_status = getExpectedStatus()

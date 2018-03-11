@@ -1,3 +1,8 @@
+void status_clear_in_buffer(){
+  while(Serial.available())
+    Serial.read();
+}
+
 
 void print_value_float(char * name, float  value){
   Serial.print("\"");
@@ -50,6 +55,7 @@ void status_print(struct CurrentStatus * cs){
 
 void status_read_environment(struct CurrentStatus * cs){
   float hum = dht_humidity();
+  delay(100);
   float temp = dht_temperature();
   if(isnan(hum) || isnan(temp)){
     cs-> missed_temp_reads = cs-> missed_temp_reads + 1;
@@ -109,8 +115,13 @@ void recvWithEndMarker(struct CurrentStatus * cs) {
 }
 
 void print_sensor_error(struct CurrentStatus * cs){
-  if(cs->missed_temp_reads > 10){
+  if(cs->missed_temp_reads > 20){
     Serial.print("{\"ERROR\": \" Temperature not read \"}");
+    Serial.println();
+    cs->missed_temp_reads = 0;
+  }
+  if(cs->missed_lux_reads > 20){
+    Serial.print("{\"ERROR\": \" Lux not read \"}");
     Serial.println();
     cs->missed_temp_reads = 0;
   }
@@ -153,6 +164,7 @@ void parse_new_data(struct CurrentStatus * cs) {
       Serial.print("'\"}");
       Serial.println();
     }
+    status_clear_in_buffer();
     cs->new_data = false;
   }
 }
@@ -176,7 +188,13 @@ void status_control_light(struct CurrentStatus * cs){
       status_stop_light(cs);
     }
   }
-  cs->visible_lux = TSL2561.readVisibleLux();
+  int lux =  TSL2561.readVisibleLux();
+    if(!isnan(lux) ){
+      cs->visible_lux = lux;
+    }else{
+      cs->missed_lux_reads += 1;
+    }
+
 }
 
 void status_control_humidity(struct CurrentStatus * cs){

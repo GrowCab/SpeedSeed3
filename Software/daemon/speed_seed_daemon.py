@@ -23,7 +23,7 @@ def getStatus(current_status):
     while data and len(data)>0:
         
         try:
-            json_data=json.loads(data.decode('utf-8'))
+            json_data=json.loads(data.decode('ascii'))
             if ('status' in json_data):
                 now = datetime.utcnow()
                 status = json_data['status']
@@ -75,12 +75,16 @@ def setArduinoProperty(setting, value):
     message =  setting + "=" + str(value) + '\n'
     print(message)
     arduino.write(message.encode('ascii') )
+    time.sleep(1)
 
 def setExpectedStatus(expected, current):
+    changed = False
     for prop in ["max_tmp", "max_humidity", "light"]:
         if(current[prop] != expected[prop]):
             setArduinoProperty(prop, expected[prop])
-            getStatus(current_status)
+            changed = True
+    if changed:
+        getStatus(current_status)
 
 
 

@@ -30,6 +30,7 @@
 struct CurrentStatus cs;
 //SFE_TSL2561 light;
 
+
 void setup() {
   Serial.begin(9600);
   Wire.begin();
@@ -54,12 +55,11 @@ void setup() {
   cs.next_light = false;
   cs.started_up = false;
   cs.missed_temp_reads = 0;
-  while(Serial.available())
-    Serial.read();
+  status_clear_in_buffer();
 }
 
 void loop() {
-  delay(5000);
+  delay(1000);
   status_read_environment(&cs);
   status_control_temperature(&cs);
   status_control_humidity(&cs);

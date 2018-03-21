@@ -161,7 +161,13 @@ void parse_new_data(struct CurrentStatus * cs) {
     }else if(messageFromPC == "max_tmp"){
       strtokIndx = strtok(NULL, ",");
       cs->max_tmp = atof(strtokIndx);
-      cs->min_tmp = cs->max_tmp - 1;
+      cs->min_tmp = cs->max_tmp -1;
+      cs->started_up = false;
+      status_print(cs);
+    }else if(messageFromPC == "min_tmp"){
+      strtokIndx = strtok(NULL, ",");
+      //TODO: Add the code to the python module to control this
+      cs->min_tmp = atof(strtokIndx);
       cs->started_up = false;
       status_print(cs);
     }else if (messageFromPC == "max_humidity") {
@@ -189,7 +195,12 @@ void parse_new_data(struct CurrentStatus * cs) {
 }
 
 void status_control_temperature(struct CurrentStatus * cs){
-  cs->next_peltier_cool_status = cs->temperature > cs->max_tmp;
+  if(cs->peltier_cool_status && cs->temperature > cs->min_tmp){
+    cs->next_peltier_cool_status = true;
+  }else{
+    cs->next_peltier_cool_status = cs->temperature > cs->max_tmp;
+  }
+
   if( !cs->started_up || cs->peltier_cool_status != cs->next_peltier_cool_status){
     if(cs->next_peltier_cool_status){
       status_start_cool(cs);
@@ -208,13 +219,13 @@ void status_control_light(struct CurrentStatus * cs){
     }
   }
 
-  int lux =  TSL2561.readVisibleLux();
+  /*int lux =  TSL2561.readVisibleLux();
     if(!isnan(lux) ){
       cs->visible_lux = lux;
     }else{
       cs->missed_lux_reads += 1;
     }
-
+*/
 }
 
 void status_control_humidity(struct CurrentStatus * cs){

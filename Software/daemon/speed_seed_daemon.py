@@ -40,8 +40,8 @@ def getStatus(current_status):
     arduino.write(message.encode('ascii') )
     time.sleep(0.5)
     data = arduino.readline()
-
-    print(attemps , data)
+    if(attemps > 0):
+        print(attemps , data)
     attemps += 1
     while data and len(data)>0:
         attemps = 0
@@ -122,6 +122,8 @@ def arduinoConnect():
     print("Connecting to arduino")
     print(arduino_port[0])
     arduino = serial.Serial(arduino_port[0], 9600, timeout=1)
+    time.sleep(1)
+    print(arduino.readline())
 
 def run():
     global db

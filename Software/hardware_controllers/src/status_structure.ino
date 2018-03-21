@@ -9,6 +9,7 @@ void print_value_float(char * name, float  value){
   Serial.print(name);
   Serial.print("\":");
   Serial.print(isnan(value)? 0 : value);
+  Serial.flush();
 }
 
 void print_value_int(char * name, int  value){
@@ -16,6 +17,7 @@ void print_value_int(char * name, int  value){
   Serial.print(name);
   Serial.print("\":");
   Serial.print(isnan(value)? 0 : value);
+  Serial.flush();
 }
 
 
@@ -24,6 +26,7 @@ void print_value_bool(char * name, bool  value){
   Serial.print(name);
   Serial.print("\":");
   Serial.print(value);
+  Serial.flush();
 }
 
 void status_print(struct CurrentStatus * cs){
@@ -56,14 +59,20 @@ void status_print(struct CurrentStatus * cs){
 
 void status_read_environment(struct CurrentStatus * cs){
   float hum = dht_humidity();
-  delay(100);
-  float temp = dht_temperature();
-  if(isnan(hum) || isnan(temp)){
-    cs-> missed_temp_reads = cs-> missed_temp_reads + 1;
-  }else{
+  //delay(100);
+  if(!isnan(hum)){
     cs->humidity = hum;
+    cs-> missed_temp_reads = 0;
+  }
+  float temp = dht_temperature();
+  //delay(100);
+  if(!isnan(temp)){
     cs->temperature = temp;
     cs-> missed_temp_reads = 0;
+  }
+
+  if( isnan(temp)){
+    cs-> missed_temp_reads = cs-> missed_temp_reads + 1;
   }
 
 }
@@ -152,6 +161,7 @@ void parse_new_data(struct CurrentStatus * cs) {
     }else if(messageFromPC == "max_tmp"){
       strtokIndx = strtok(NULL, ",");
       cs->max_tmp = atof(strtokIndx);
+      cs->min_tmp = cs->max_tmp - 1;
       cs->started_up = false;
       status_print(cs);
     }else if (messageFromPC == "max_humidity") {
@@ -197,6 +207,7 @@ void status_control_light(struct CurrentStatus * cs){
       status_stop_light(cs);
     }
   }
+
   int lux =  TSL2561.readVisibleLux();
     if(!isnan(lux) ){
       cs->visible_lux = lux;

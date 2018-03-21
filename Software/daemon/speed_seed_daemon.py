@@ -8,7 +8,7 @@ import sys
 
 from pymongo import MongoClient
 from datetime import datetime
-import daemon 
+#import daemon 
 
 
 def findArduino():
@@ -38,6 +38,7 @@ def getStatus(current_status):
     global attemps
     message = "PRINT=" + '\n'
     arduino.write(message.encode('ascii') )
+    time.sleep(0.5)
     data = arduino.readline()
 
     print(attemps , data)
@@ -53,7 +54,7 @@ def getStatus(current_status):
                 db.sensors.insert(status)
                 current_status.update(status)
                 print(str(current_status))
-            if('ERROR' in json_data):
+            elif('ERROR' in json_data):
                 now = datetime.utcnow()
                 status = json_data['ERROR']
                 json_data['timestamp'] = now
@@ -61,14 +62,16 @@ def getStatus(current_status):
             else:
                 print(str(json_data))
         except:
-            default_settings = {
+            print("Couldnt parse:" + str(data))
+
+            tmp_error = {
                 "ERROR": "Unable to parse " + str(data),
                 "timestamp" : datetime.utcnow()
             }
-            print( "ERROR")
+            db.errors.insert(tmp_error)
             pass
         data = arduino.readline()
-    if (attemps > 10):
+    if (attemps > 3):
         arduinoReset()
 
 def getExpectedStatus():
@@ -92,6 +95,7 @@ def getExpectedStatus():
             if h["start_hour"] <= now.hour <= h["end_hour"] and h["start_hour"] <= now.hour <= h["end_hour"]:
                 ret["light"] = h["status"]
     except StopIteration:
+        global default_settings
         default_settings['timestamp'] = now
         db.settings.insert(default_settings)
     return ret
@@ -100,7 +104,7 @@ def setArduinoProperty(setting, value):
     message =  setting + "=" + str(value) + '\n'
     print(message)
     arduino.write(message.encode('ascii') )
-    time.sleep(1)
+    time.sleep(0.5)
 
 def setExpectedStatus(expected, current):
     changed = False
@@ -123,6 +127,7 @@ def run():
     global db
     global attemps
     global current_status
+    global default_settings
     default_settings = {
         'temperature': [{
         'start_hour': 0,
@@ -179,10 +184,10 @@ def run():
     current_status = {}
     attemps = 0
     while True:
-        time.sleep(1)
+        time.sleep(0.5)
         expected_status = getExpectedStatus()
         i+=1
-        if i == 60 or len(current_status) == 0 :
+        if i == 120 or len(current_status) == 0 :
             getStatus(current_status)
             i=0
         if len(current_status) > 0 and len(expected_status) > 0:

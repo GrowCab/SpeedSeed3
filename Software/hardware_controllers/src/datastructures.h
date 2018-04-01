@@ -1,4 +1,4 @@
-const byte numChars = 32;
+const int numChars = 32;
 
 typedef struct CurrentStatus
 {
@@ -9,11 +9,17 @@ typedef struct CurrentStatus
    float fan2_hz;
    float max_tmp;
    float min_tmp;
+   float max_humidity;
+   int visible_lux;
+   int missed_temp_reads;
+   int missed_lux_reads;
    bool peltier_cool_status;
    bool next_peltier_cool_status;
    bool new_data;
    bool humidity_fan_status;
    bool next_humidity_fan_status;
-   float max_humidity;
+   bool light;
+   bool next_light;
+   bool started_up;
 
 } current_status ;

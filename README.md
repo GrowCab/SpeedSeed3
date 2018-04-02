@@ -2,3 +2,20 @@
 
 # SpeedSeed3
 SS<sup>3</sup>
+
+
+##Setting up Raspbery Pi
+The setup currently consist of a Raspberry Pi3 running Raspbian. 
+
+
+###Python dependencies. 
+
+The modules to run the daemon are:
+
+```
+pip3 install pyserial
+```
+
+##Setting up arduino
+
+The code for the controller is in 

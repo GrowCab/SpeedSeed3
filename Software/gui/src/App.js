@@ -4,11 +4,20 @@ import "./App.css";
 import DialControl from "./components/DialControl";
 import ConfigForm from "./components/ConfigForm";
 
+
+var xspans = require('xspans')
+
 class App extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
 			devMonitors: "",
+			settings2: {
+				// "temperature" : {
+				// 	"times": xspans([0,200, 1440]), 
+				// 	"values": [21,22],
+				// },
+			},
 			settings: {
 				"temperature": [
 					{value: 10, label: "-2"},
@@ -25,6 +34,8 @@ class App extends Component {
 					{value: 90, label: "100"},
 					{value: 100, label: "20"}]
 			},
+			intervalTest: xspans([{from: 0, to: 1440}]),
+			intervalTest2: xspans([{from: 200, to: 400}]),
 		}
 	
 		this.pAngle = 0.012;
@@ -45,14 +56,6 @@ class App extends Component {
 		fetch('/getMonitors')
 		.then(res => res.json())
 		.then(devMonitors => this.setState({devMonitors}));
-		var tst=[
-			{value: 40, label: "-2"},
-			{value: 5, label: "16"},
-			{value: 10, label: "30"}];
-		console.log(tst);
-		tst.sort(function(a,b) {return a.value < b.value;});
-		console.log(tst);
-
 	}
 	
 	componentWillUnmount() {
@@ -83,22 +86,22 @@ class App extends Component {
 				</header>
 				<p className="App-intro"></p>
 				<div >
-					<div class="row">
-						<div class="col-sm-4">
+					<div className="row">
+						<div className="col-sm-4">
 							<svg height={this.height} width={this.width}>
 								<DialControl unit="C" currentValue={this.state.devMonitors.temperature} x={100} y={100} outerRadius={100} innerRadius={50} padAngle={this.pAngle} 
 									data={this.state.settings.temperature}
 								/>
 							</svg>
 						</div>
-						<div class="col-sm-4">
+						<div className="col-sm-4">
 							<svg height={this.height} width={this.width}>
 								<DialControl unit="lum" currentValue={this.state.devMonitors.luminance} x={100} y={100} outerRadius={100} innerRadius={50} padAngle={this.pAngle}
 									data={this.state.settings.lights}
 								/>
 							</svg>
 						</div>
-						<div class="col-sm-4">
+						<div className="col-sm-4">
 							<svg height={this.height} width={this.width}>
 								<DialControl unit="%" currentValue={this.state.devMonitors.humidity} x={100} y={100} outerRadius={100} innerRadius={50} padAngle={this.pAngle}
 									data={this.state.settings.humidity}
@@ -107,7 +110,7 @@ class App extends Component {
 						</div>
 					</div>
 				</div>
-				<button onClick={this.sendSettings} class="btn btn-primary">Submit</button>
+				<button onClick={this.sendSettings} className="btn btn-primary">Submit</button>
 				<ConfigForm/>
 			</div>
 		);

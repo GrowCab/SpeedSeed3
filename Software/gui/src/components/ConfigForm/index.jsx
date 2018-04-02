@@ -14,24 +14,24 @@ class ConfigForm extends Component {
 
 	render() {
 		return (
-        <div class="float-left">
+        <div className="float-left">
             <form padding-top="20">
-                <div class="form-group row">
-                    <label class="col-sm-2 col-form-label" for="fromInput">From:</label>
-                    <div class="col-sm-10">
+                <div className="form-group row">
+                    <label className="col-sm-2 col-form-label" htmlFor="fromInput">From:</label>
+                    <div className="col-sm-10">
                         <TimePicker colorPalette="dark"  minuteStep={1}/>
                     </div>
                 </div>
-                <div class="form-group row">
-                    <label class="col-sm-2 col-form-label"  for="toInput">To:</label>
-                    <div class="col-sm-10">
+                <div className="form-group row">
+                    <label className="col-sm-2 col-form-label"  htmlFor="toInput">To:</label>
+                    <div className="col-sm-10">
                         <TimePicker colorPalette="dark" theme="classic" minuteStep={15}/>
                     </div>
                 </div>
-                <div class="form-group row">
-                    <label class="col-sm-2 col-form-label" for="valueInput">Value:</label>
-                    <div class="col-sm-10">
-                        <input id="valueInput" class="form-control" type="text"></input>
+                <div className="form-group row">
+                    <label className="col-sm-2 col-form-label" htmlFor="valueInput">Value:</label>
+                    <div className="col-sm-10">
+                        <input id="valueInput" className="form-control" type="text"></input>
                     </div>
                 </div>
             </form>

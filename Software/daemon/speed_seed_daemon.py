@@ -5,6 +5,8 @@ import json
 import datetime
 import codecs
 import sys 
+import logging
+import logging.handlers
 
 from pymongo import MongoClient
 from datetime import datetime
@@ -54,13 +56,16 @@ def getStatus(current_status):
                 db.sensors.insert(status)
                 current_status.update(status)
                 print(str(current_status))
+                logging.info(str(current_status))
             elif('ERROR' in json_data):
                 now = datetime.utcnow()
                 status = json_data['ERROR']
                 json_data['timestamp'] = now
                 db.errors.insert(json_data)
+                logging.info(json_data)
             else:
                 print(str(json_data))
+                logging.info(str(json_data))
         except:
             print("Couldnt parse:" + str(data))
 
@@ -69,6 +74,7 @@ def getStatus(current_status):
                 "timestamp" : datetime.utcnow()
             }
             db.errors.insert(tmp_error)
+            logging.info(tmp_error)
             pass
         data = arduino.readline()
     if (attemps > 3):
@@ -176,7 +182,11 @@ def run():
     }
 
     reader = codecs.getreader("ascii")
-    
+    log_handler = logging.handlers.WatchedFileHandler('my.log')
+    logger = logging.getLogger()
+    logger.addHandler(log_handler)
+    logger.setLevel(logging.DEBUG)
+
     client = MongoClient('mongodb://127.0.0.1:27017')
     db = client['speedseed3']
     print(str(db))

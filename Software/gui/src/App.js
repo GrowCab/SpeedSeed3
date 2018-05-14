@@ -3,6 +3,7 @@ import logo from "./logo.svg";
 import "./App.css";
 import DialControl from "./components/DialControl";
 import ConfigForm from "./components/ConfigForm";
+import "axios";
 
 
 var xspans = require('xspans')
@@ -20,22 +21,26 @@ class App extends Component {
 			},
 			settings: {
 				"temperature": [
-					{value: 10, label: "-2"},
-					{value: 30, label: "16"},
-					{value: 80, label: "30"}],
+					{value: 1, label: "1"},
+					{value: 2, label: "2"},
+					{value: 3, label: "3"},
+				],
 				"humidity": [
-					{value: 20, label: "20"},
-					{value: 30, label: "25"},
-					{value: 45, label: "45"},
-					{value: 50, label: "60"}, 	
-					{value: 80, label: "40"}],
+					{value: 1, label: "1"},
+					{value: 2, label: "2"}, 	
+					{value: 3, label: "3"},
+					{value: 4, label: "4"},
+					{value: 5, label: "5"},
+				],
 				"lights": [
-					{value: 30, label: "5"},
-					{value: 90, label: "100"},
-					{value: 100, label: "20"}]
+					{value: 1, label: "1"},
+					{value: 2, label: "2"},
+					{value: 3, label: "3"},
+				],
 			},
 			intervalTest: xspans([{from: 0, to: 1440}]),
 			intervalTest2: xspans([{from: 200, to: 400}]),
+			curTime: new Date(),
 		}
 	
 		this.pAngle = 0.012;
@@ -48,14 +53,19 @@ class App extends Component {
 
 	componentDidMount(){
 		this.timer = setInterval(()=> this.getItems(), 7000);
-		// fetch('/getSettings')
-		// .then(res => res.json())
-		// .then(settings => this.setState({settings}))
+		setInterval( () => {
+			let t = new Date();
+			this.setState({
+			  curTime : new Date(),
+			  arrowAngle : (((t.getHours()*60+t.getMinutes())/1440)*360*Math.PI/180)-Math.PI/2,
+			})
+		  },6000); // Get time every minute 
 	}
 	getItems() {
 		fetch('/getMonitors')
 		.then(res => res.json())
-		.then(devMonitors => this.setState({devMonitors}));
+		.then(devMonitors => this.setState({devMonitors}))
+		.catch(error => console.log("BAD2", error));
 	}
 	
 	componentWillUnmount() {
@@ -89,29 +99,30 @@ class App extends Component {
 					<div className="row">
 						<div className="col-sm-4">
 							<svg height={this.height} width={this.width}>
-								<DialControl unit="C" currentValue={this.state.devMonitors.temperature} x={100} y={100} outerRadius={100} innerRadius={50} padAngle={this.pAngle} 
+								<DialControl arrowAngle={this.state.arrowAngle} unit="C" currentValue={this.state.devMonitors.temperature} x={100} y={100} outerRadius={100} innerRadius={50} padAngle={this.pAngle} 
 									data={this.state.settings.temperature}
 								/>
 							</svg>
 						</div>
 						<div className="col-sm-4">
 							<svg height={this.height} width={this.width}>
-								<DialControl unit="lum" currentValue={this.state.devMonitors.luminance} x={100} y={100} outerRadius={100} innerRadius={50} padAngle={this.pAngle}
+								<DialControl arrowAngle={this.state.arrowAngle} unit="lum" currentValue={this.state.devMonitors.luminance} x={100} y={100} outerRadius={100} innerRadius={50} padAngle={this.pAngle}
 									data={this.state.settings.lights}
 								/>
 							</svg>
 						</div>
 						<div className="col-sm-4">
 							<svg height={this.height} width={this.width}>
-								<DialControl unit="%" currentValue={this.state.devMonitors.humidity} x={100} y={100} outerRadius={100} innerRadius={50} padAngle={this.pAngle}
+								<DialControl arrowAngle={this.state.arrowAngle} unit="%" currentValue={this.state.devMonitors.humidity} x={100} y={100} outerRadius={100} innerRadius={50} padAngle={this.pAngle}
 									data={this.state.settings.humidity}
 								/>
 							</svg>
 						</div>
 					</div>
 				</div>
-				<button onClick={this.sendSettings} className="btn btn-primary">Submit</button>
-				<ConfigForm/>
+				<div className="col-sm-4" >
+					<ConfigForm min="10" max="30" value="10"/>
+				</div>
 			</div>
 		);
 	}

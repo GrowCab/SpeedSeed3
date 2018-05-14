@@ -1,38 +1,46 @@
 // ./src/components/Piechart/index.jsx
  
 import React, { Component } from "react";
-import TimePicker from 'react-times';
-// use material theme
-import 'react-times/css/material/default.css';
-// or you can use classic theme
-import 'react-times/css/classic/default.css';
  
 class ConfigForm extends Component {
-	constructor() {
-		super();
-	}
+	constructor(props) {
+        super(props);
+        this.state = {
+            value: props.value,
+        };
+    }
 
-	render() {
+    onChange(event) {
+        console.log(event.target.value);
+        this.setState({value: event.target.value});
+    }
+
+    render() {
 		return (
         <div className="float-left">
             <form padding-top="20">
                 <div className="form-group row">
                     <label className="col-sm-2 col-form-label" htmlFor="fromInput">From:</label>
                     <div className="col-sm-10">
-                        <TimePicker colorPalette="dark"  minuteStep={1}/>
+                    <input type="time"/>
                     </div>
                 </div>
                 <div className="form-group row">
                     <label className="col-sm-2 col-form-label"  htmlFor="toInput">To:</label>
                     <div className="col-sm-10">
-                        <TimePicker colorPalette="dark" theme="classic" minuteStep={15}/>
+                    <input type="time"/>
                     </div>
                 </div>
                 <div className="form-group row">
                     <label className="col-sm-2 col-form-label" htmlFor="valueInput">Value:</label>
                     <div className="col-sm-10">
-                        <input id="valueInput" className="form-control" type="text"></input>
+                        <input id="valueInput" type="range" value={this.state.value}
+                            min={this.props.min} max={this.props.max} 
+                            onChange={this.onChange.bind(this)}
+                        />
+                        <label>{this.state.value}</label>
                     </div>
+                    <button onClick={this.sendSettings} className="btn btn-primary">Submit</button>
                 </div>
             </form>
         </div>

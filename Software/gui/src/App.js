@@ -3,7 +3,6 @@ import logo from "./logo.svg";
 import "./App.css";
 import DialControl from "./components/DialControl";
 import ConfigForm from "./components/ConfigForm";
-import "axios";
 
 
 var xspans = require('xspans')

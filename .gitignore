@@ -31,3 +31,4 @@
 *.exe
 *.out
 *.app
+Software/gui/.vscode/launch.json

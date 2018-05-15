@@ -9,7 +9,6 @@ class ConfigForm extends Component {
     }
 
     onChange(event) {
-        console.log(event.target.value);
         this.setState({value: event.target.value});
     }
 

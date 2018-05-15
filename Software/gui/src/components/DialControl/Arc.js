@@ -108,8 +108,8 @@ class DialSetting extends Arc {
                     <h2 ref={subtitle => this.subtitle = subtitle}>Input form</h2>
                     <ConfigForm onClick={this.closeModal} 
                         value={this.props.data.data.label} 
-                        start={this.props.data.start} 
-                        end={this.props.data.end}
+                        start={this.props.data.data.start} 
+                        end={this.props.data.data.end}
                         min={this.props.min}
                         max={this.props.max}
                         unit={this.props.unit}/>

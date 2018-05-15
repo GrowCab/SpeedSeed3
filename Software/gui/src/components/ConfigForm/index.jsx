@@ -5,13 +5,35 @@ class ConfigForm extends Component {
         super(props);
         this.state = {
             value: (props.value==="ON")?1:(props.value==="OFF")?0:props.value,
+            label: props.value,
         };
+		this.sendSettings = this.sendSettings.bind(this);
     }
 
     onChange(event) {
-        this.setState({value: event.target.value});
+        let val = event.target.value;
+        val = (this.props.unit==="")? (val==0)?"OFF":"ON":val;
+        this.setState({
+            value: event.target.value,
+            label: val
+        });
     }
 
+    sendSettings() {
+		var data= JSON.stringify( this.state.settings );
+		console.log(data);
+		fetch('/setSettings', {
+			method: "POST",
+			headers: {
+				'Accept': 'application/json',
+				'Content-Type': 'application/json',
+			},
+			body: data
+		})
+		.then(function(res){ return res.json(); })
+        .then(function(data){ alert( JSON.stringify( data ) ) })
+        .catch(error => console.log("sendSettings error: ", error));
+	}
     render() {
 		return (
         <div className="float-left">
@@ -35,7 +57,7 @@ class ConfigForm extends Component {
                             min={this.props.min} max={this.props.max} 
                             onChange={this.onChange.bind(this)}
                         />
-                        <label>{this.state.value}</label>
+                        <label>{this.state.label}</label>
                     </div>
                     <button onClick={this.sendSettings} className="btn btn-primary">Save</button>
                     <button onClick={this.closeModal} className="btn btn-primary">Close</button>

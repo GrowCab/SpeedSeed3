@@ -39,14 +39,14 @@ class App extends Component {
 	}
 
 	componentDidMount(){
-		this.timer = setInterval(()=> this.getItems(), 7000);
+		this.timer = setInterval(()=> this.getItems(), 1000); // Get current state every 1s
 		setInterval( () => {
 			let t = new Date();
 			let stateCopy = this.state;
 			stateCopy.curTime = new Date()
 			stateCopy.arrowAngle = (((t.getHours()*60+t.getMinutes())/1440)*360*Math.PI/180)-Math.PI/2
 			this.setState(stateCopy)
-		  },6000); // Get time every minute 
+		  },60000); // Get time every 60s 
 	}
 	getItems() {
 		fetch('/getMonitors')

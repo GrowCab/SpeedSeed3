@@ -34,7 +34,7 @@ class DialControl extends Component {
 			<g transform={translate}>
 				{pie.map((d, i) => this.arcGenerator(d, this.props.unit, i))}
 
-				<text textAnchor="middle">{this.props.currentValue}</text>
+				<text textAnchor="middle" fontSize="13pt">{this.props.currentValue+this.props.unit}</text>
 
 				<line 
 					x1={0.5*this.props.innerRadius*Math.cos(this.props.arrowAngle)} 

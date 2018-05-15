@@ -8,9 +8,9 @@ var uri = "mongodb://192.168.1.76:27017/speedseed3",
 /* GET users listing. */
 router.get('/', function(req, res, next) {
   var myJson = {
-    humidity: "120",
-    temperature: "100",
-    luminance: "30",
+    humidity: "30",
+    temperature: "20",
+    luminance: "ON",
   };
   res.json(myJson);
 });

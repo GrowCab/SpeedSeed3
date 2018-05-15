@@ -1,5 +1,3 @@
-// ./src/components/Piechart/index.jsx
- 
 import React, { Component } from "react";
  
 class ConfigForm extends Component {

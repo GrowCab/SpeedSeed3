@@ -1,5 +1,3 @@
-// ./src/components/Piechart/index.jsx
- 
 import React, { Component } from "react";
 import { pie } from "d3";
 import * as scale  from "d3-scale";

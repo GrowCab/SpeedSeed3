@@ -106,8 +106,9 @@ class DialSetting extends Arc {
                 style={customStyles}
                 contentLabel="Example Modal">
                     <h2 ref={subtitle => this.subtitle = subtitle}>Input form</h2>
-                    <ConfigForm onClick={this.closeModal} 
-                        value={this.props.data.data.label} 
+                    <ConfigForm onClick={this.closeModal}
+                        label={this.props.data.data.label}
+                        value={this.props.data.data.value}
                         start={this.props.data.data.start} 
                         end={this.props.data.data.end}
                         min={this.props.min}

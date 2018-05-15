@@ -3,16 +3,20 @@ import React, { Component } from "react";
 class ConfigForm extends Component {
 	constructor(props) {
         super(props);
+        let val = (props.unit==="")?(props.label==="OFF")?'0':'1':props.label;
         this.state = {
-            value: (props.value==="ON")?1:(props.value==="OFF")?0:props.value,
-            label: props.value,
+            value: val,
+            label: props.label,
         };
-		this.sendSettings = this.sendSettings.bind(this);
+        this.sendSettings = this.sendSettings.bind(this);
+        this.onChange = this.onChange.bind(this);
     }
 
     onChange(event) {
         let val = event.target.value;
-        val = (this.props.unit==="")? (val==0)?"OFF":"ON":val;
+        val = (this.props.unit==="")?
+                (val==0)?"OFF":"ON" :
+                val;
         this.setState({
             value: event.target.value,
             label: val
@@ -41,21 +45,22 @@ class ConfigForm extends Component {
                 <div className="form-group row">
                     <label className="col-sm-2 col-form-label" htmlFor="fromInput">From:</label>
                     <div className="col-sm-10">
-                    <input type="time" value={this.props.start}/>
+                    <input type="time" defaultValue={this.props.start}/>
                     </div>
                 </div>
                 <div className="form-group row">
                     <label className="col-sm-2 col-form-label"  htmlFor="toInput">To:</label>
                     <div className="col-sm-10">
-                    <input type="time" value={this.props.end}/>
+                    <input type="time" defaultValue={this.props.end}/>
                     </div>
                 </div>
                 <div className="form-group row">
                     <label className="col-sm-2 col-form-label" htmlFor="valueInput">{this.props.unit}</label>
                     <div className="col-sm-10">
-                        <input id="valueInput" type="range" value={this.state.value}
+                        <input id="valueInput" type="range"
+                            value={this.state.value}
                             min={this.props.min} max={this.props.max} 
-                            onChange={this.onChange.bind(this)}
+                            onChange={this.onChange}
                         />
                         <label>{this.state.label}</label>
                     </div>

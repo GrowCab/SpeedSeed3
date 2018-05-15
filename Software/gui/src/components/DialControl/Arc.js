@@ -1,6 +1,18 @@
 import React, { Component } from 'react';
-
+import Modal from 'react-modal';
+import ConfigForm from "../ConfigForm";
 import {arc} from 'd3'
+
+const customStyles = {
+	content : {
+	  top                   : '50%',
+	  left                  : '50%',
+	  right                 : 'auto',
+	  bottom                : 'auto',
+	  marginRight           : '-50%',
+	  transform             : 'translate(-50%, -50%)'
+	}
+  };
 
 class Arc extends Component {
   constructor() {
@@ -33,9 +45,17 @@ class Arc extends Component {
 class DialSetting extends Arc {
     constructor(props) {
         super(props);
-        this.state = {flipped: null};
-    }
+        this.state = {
+            flipped: null,
+            modalIsOpen: false,
+        };
 
+        this.openModal = this.openModal.bind(this);
+		this.afterOpenModal = this.afterOpenModal.bind(this);
+		this.closeModal = this.closeModal.bind(this);	  
+
+    }
+    
     mouseOver() {
         console.log("Mouse over!!");
         this.setState({flipped:false});
@@ -55,12 +75,40 @@ class DialSetting extends Arc {
             innerRadius:this.props.innerRadius,
             outerRadius:this.props.outerRadius});            
     }
+
+    openModal() {
+		this.setState({modalIsOpen: true});
+	  }
+	
+	  afterOpenModal() {
+		// references are now sync'd and can be accessed.
+	  }
+	
+	  closeModal() {
+		this.setState({modalIsOpen: false});
+	  }
+	
   render() {
       let [labelX, labelY] = this.arc.centroid(this.props.data),
           labelTranslate = `translate(${labelX}, ${labelY})`;
 
       return (
-          <g onMouseOver={()=> this.mouseOver()} onMouseOut={()=>this.mouseOut()}>
+          <g onMouseOver={()=> this.mouseOver()} onMouseOut={()=>this.mouseOut()} onClick={this.openModal}>
+              <Modal 
+                isOpen={this.state.modalIsOpen}
+                onAfterOpen={this.afterOpenModal}
+                onRequestClose={this.closeModal}
+                style={customStyles}
+                contentLabel="Example Modal">
+                    <h2 ref={subtitle => this.subtitle = subtitle}>Input form</h2>
+                    <ConfigForm onClick={this.closeModal} 
+                        value={this.props.data.value} 
+                        start={this.props.data.start} 
+                        end={this.props.data.end}
+                        min={this.props.min}
+                        max={this.props.max}
+                        unit={this.props.unit}/>
+            </Modal>
               {super.render()}
               <text transform={labelTranslate}
                     textAnchor="middle">

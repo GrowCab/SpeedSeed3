@@ -21,7 +21,7 @@ class Arc extends Component {
 
   componentWillMount() {
       this.updateD3(this.props);
-  }1
+  }
 
   componentWillReceiveProps(newProps) {
       this.updateD3(newProps);
@@ -57,8 +57,22 @@ class DialSetting extends Arc {
 
         this.openModal = this.openModal.bind(this);
 		this.afterOpenModal = this.afterOpenModal.bind(this);
-		this.closeModal = this.closeModal.bind(this);	  
-
+        this.closeModal = this.closeModal.bind(this);
+        
+        switch(props.unit) {
+            case "":
+                this.title="Edit Illumination"
+            break;
+            case "C":
+                this.title="Edit Temperature"
+            break;
+            case "%":
+                this.title="Edit Humidity"
+            break;
+            default:
+                console.log("unexpected case: " + props.unit)
+            break;
+        }
     }
     
     mouseOver() {
@@ -100,12 +114,13 @@ class DialSetting extends Arc {
       return (
           <g onClick={this.openModal}>
               <Modal 
+                ariaHideApp={false}
                 isOpen={this.state.modalIsOpen}
                 onAfterOpen={this.afterOpenModal}
                 onRequestClose={this.closeModal}
                 style={customStyles}
-                contentLabel="Example Modal">
-                    <h2 ref={subtitle => this.subtitle = subtitle}>Input form</h2>
+                contentLabel="Edit modal">
+                    <h2 ref={subtitle => this.subtitle = subtitle}>{this.title}</h2>
                     <ConfigForm onClick={this.closeModal}
                         label={this.props.data.data.label}
                         value={this.props.data.data.value}

@@ -11,12 +11,13 @@ class ConfigForm extends Component {
         this.sendSettings = this.sendSettings.bind(this);
         this.onChange = this.onChange.bind(this);
     }
-
+    
     onChange(event) {
-        let val = event.target.value;
-        val = (this.props.unit==="")?
-                (val==0)?"OFF":"ON" :
-                val;
+        // If the unit is "" it means illumination so the labe and only
+        // ever be either "ON" or "OFF", sorry for the hack (ternary inside ternary)
+        let val = (this.props.unit==="")?
+                (event.target.value==="0")?"OFF":"ON" :
+                event.target.value;
         this.setState({
             value: event.target.value,
             label: val
@@ -24,8 +25,9 @@ class ConfigForm extends Component {
     }
 
     sendSettings() {
+        console.log("Is this happenning?")
 		var data= JSON.stringify( this.state.settings );
-		console.log(data);
+		console.log("The data to send: " + data);
 		fetch('/setSettings', {
 			method: "POST",
 			headers: {
@@ -35,7 +37,7 @@ class ConfigForm extends Component {
 			body: data
 		})
 		.then(function(res){ return res.json(); })
-        .then(function(data){ alert( JSON.stringify( data ) ) })
+        .then(function(data){ console.log( JSON.stringify( data ) ) })
         .catch(error => console.log("sendSettings error: ", error));
 	}
     render() {

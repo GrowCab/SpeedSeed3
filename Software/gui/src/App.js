@@ -2,43 +2,31 @@ import React, { Component } from "react";
 import logo from "./logo.svg";
 import "./App.css";
 import DialControl from "./components/DialControl";
-import ConfigForm from "./components/ConfigForm";
-
-
-var xspans = require('xspans')
 
 class App extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
 			devMonitors: "",
-			settings2: {
-				// "temperature" : {
-				// 	"times": xspans([0,200, 1440]), 
-				// 	"values": [21,22],
-				// },
-			},
 			settings: {
 				"temperature": [
-					{value: 1, label: "1"},
-					{value: 2, label: "2"},
-					{value: 3, label: "3"},
+					{value: 1, label: "1", position:1},
+					{value: 2, label: "2", position:2},
+					{value: 3, label: "3", position:3},
 				],
 				"humidity": [
-					{value: 1, label: "1"},
-					{value: 2, label: "2"}, 	
-					{value: 3, label: "3"},
-					{value: 4, label: "4"},
-					{value: 5, label: "5"},
+					{value: 1, label: "1", position:0},
+					{value: 2, label: "2", position:1}, 	
+					{value: 3, label: "3", position:2},
+					{value: 4, label: "4", position:3},
+					{value: 5, label: "5", position:4},
 				],
 				"lights": [
-					{value: 1, label: "1"},
-					{value: 2, label: "2"},
-					{value: 3, label: "3"},
+					{value: 1, label: "1", position:1},
+					{value: 2, label: "2", position:2},
+					{value: 3, label: "3", position:3},
 				],
 			},
-			intervalTest: xspans([{from: 0, to: 1440}]),
-			intervalTest2: xspans([{from: 200, to: 400}]),
 			curTime: new Date(),
 		}
 	
@@ -118,9 +106,6 @@ class App extends Component {
 							</svg>
 						</div>
 					</div>
-				</div>
-				<div className="col-sm-4" >
-					<ConfigForm min="10" max="30" value="10"/>
 				</div>
 			</div>
 		);

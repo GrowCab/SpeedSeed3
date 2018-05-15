@@ -22,17 +22,17 @@ class ConfigForm extends Component {
                 <div className="form-group row">
                     <label className="col-sm-2 col-form-label" htmlFor="fromInput">From:</label>
                     <div className="col-sm-10">
-                    <input type="time"/>
+                    <input type="time" value={this.props.start}/>
                     </div>
                 </div>
                 <div className="form-group row">
                     <label className="col-sm-2 col-form-label"  htmlFor="toInput">To:</label>
                     <div className="col-sm-10">
-                    <input type="time"/>
+                    <input type="time" value={this.props.end}/>
                     </div>
                 </div>
                 <div className="form-group row">
-                    <label className="col-sm-2 col-form-label" htmlFor="valueInput">Value:</label>
+                    <label className="col-sm-2 col-form-label" htmlFor="valueInput">{this.props.unit}</label>
                     <div className="col-sm-10">
                         <input id="valueInput" type="range" value={this.state.value}
                             min={this.props.min} max={this.props.max} 
@@ -40,7 +40,7 @@ class ConfigForm extends Component {
                         />
                         <label>{this.state.value}</label>
                     </div>
-                    <button onClick={this.sendSettings} className="btn btn-primary">Submit</button>
+                    <button onClick={this.sendSettings} className="btn btn-primary">Save</button>
                 </div>
             </form>
         </div>

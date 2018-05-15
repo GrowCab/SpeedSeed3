@@ -10,21 +10,20 @@ class App extends Component {
 			devMonitors: "",
 			settings: {
 				"temperature": [
-					{value: 1, label: "1", position:1},
-					{value: 2, label: "2", position:2},
-					{value: 3, label: "3", position:3},
+					{value: 10, label: "10", position:1},
+					{value: 20, label: "20", position:2},
+					{value: 30, label: "30", position:3},
 				],
 				"humidity": [
-					{value: 1, label: "1", position:0},
-					{value: 2, label: "2", position:1}, 	
-					{value: 3, label: "3", position:2},
-					{value: 4, label: "4", position:3},
-					{value: 5, label: "5", position:4},
+					{value: 10, label: "15", position:0},
+					{value: 10, label: "20", position:1}, 	
+					{value: 10, label: "30", position:2},
+					{value: 10, label: "40", position:3},
+					{value: 10, label: "50", position:4},
 				],
 				"lights": [
-					{value: 1, label: "1", position:1},
-					{value: 2, label: "2", position:2},
-					{value: 3, label: "3", position:3},
+					{value: 1, label: "ON", position:1},
+					{value: 1, label: "OFF", position:2},
 				],
 			},
 			curTime: new Date(),
@@ -79,7 +78,7 @@ class App extends Component {
 		return (
 			<div className="App">
 				<header className="App-header">
-					<h1 className="App-title">Welcome to SpeedSeed3</h1>
+					<h1 className="App-title">SpeedSeed3</h1>
 				</header>
 				<p className="App-intro"></p>
 				<div >
@@ -87,21 +86,21 @@ class App extends Component {
 						<div className="col-sm-4">
 							<svg height={this.height} width={this.width}>
 								<DialControl arrowAngle={this.state.arrowAngle} unit="C" currentValue={this.state.devMonitors.temperature} x={100} y={100} outerRadius={100} innerRadius={50} padAngle={this.pAngle} 
-									data={this.state.settings.temperature}
+									data={this.state.settings.temperature} min="10" max="30"
 								/>
 							</svg>
 						</div>
 						<div className="col-sm-4">
 							<svg height={this.height} width={this.width}>
-								<DialControl arrowAngle={this.state.arrowAngle} unit="lum" currentValue={this.state.devMonitors.luminance} x={100} y={100} outerRadius={100} innerRadius={50} padAngle={this.pAngle}
-									data={this.state.settings.lights}
+								<DialControl arrowAngle={this.state.arrowAngle} unit="" currentValue={this.state.devMonitors.luminance} x={100} y={100} outerRadius={100} innerRadius={50} padAngle={this.pAngle}
+									data={this.state.settings.lights} min="0" max="1"
 								/>
 							</svg>
 						</div>
 						<div className="col-sm-4">
 							<svg height={this.height} width={this.width}>
 								<DialControl arrowAngle={this.state.arrowAngle} unit="%" currentValue={this.state.devMonitors.humidity} x={100} y={100} outerRadius={100} innerRadius={50} padAngle={this.pAngle}
-									data={this.state.settings.humidity}
+									data={this.state.settings.humidity} min="15" max="70"
 								/>
 							</svg>
 						</div>

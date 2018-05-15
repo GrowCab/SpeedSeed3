@@ -37,7 +37,12 @@ class Arc extends Component {
   render() {
     return (
       <path d={this.arc(this.props.data)}
-            style={{fill: this.props.color}}></path>
+            style={
+                {
+                    fill: this.props.color,
+                    border: "red"}
+                }
+      />
   );
   }
 }
@@ -93,7 +98,7 @@ class DialSetting extends Arc {
           labelTranslate = `translate(${labelX}, ${labelY})`;
 
       return (
-          <g onMouseOver={()=> this.mouseOver()} onMouseOut={()=>this.mouseOut()} onClick={this.openModal}>
+          <g onClick={this.openModal}>
               <Modal 
                 isOpen={this.state.modalIsOpen}
                 onAfterOpen={this.afterOpenModal}
@@ -102,7 +107,7 @@ class DialSetting extends Arc {
                 contentLabel="Example Modal">
                     <h2 ref={subtitle => this.subtitle = subtitle}>Input form</h2>
                     <ConfigForm onClick={this.closeModal} 
-                        value={this.props.data.value} 
+                        value={this.props.data.data.label} 
                         start={this.props.data.start} 
                         end={this.props.data.end}
                         min={this.props.min}

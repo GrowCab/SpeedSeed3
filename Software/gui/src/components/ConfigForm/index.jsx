@@ -6,7 +6,7 @@ class ConfigForm extends Component {
 	constructor(props) {
         super(props);
         this.state = {
-            value: props.value,
+            value: (props.value==="ON")?1:(props.value==="OFF")?0:props.value,
         };
     }
 
@@ -41,6 +41,7 @@ class ConfigForm extends Component {
                         <label>{this.state.value}</label>
                     </div>
                     <button onClick={this.sendSettings} className="btn btn-primary">Save</button>
+                    <button onClick={this.closeModal} className="btn btn-primary">Close</button>
                 </div>
             </form>
         </div>

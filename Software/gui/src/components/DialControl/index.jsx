@@ -17,6 +17,8 @@ class DialControl extends Component {
 			<DialSetting key={`arc-${i}`}
 				data={d}
 				unit={u}
+				min={this.props.min}
+				max={this.props.max}
 				innerRadius={this.props.innerRadius}
 				outerRadius={this.props.outerRadius}
 				padAngle={this.props.padAngle}

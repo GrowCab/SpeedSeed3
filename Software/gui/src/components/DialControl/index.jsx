@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { pie } from "d3";
 import * as scale  from "d3-scale";
-import DialSetting  from "./Arc";
+import DialSetting  from "../Arc";
  
 class DialControl extends Component {
 	constructor(props) {

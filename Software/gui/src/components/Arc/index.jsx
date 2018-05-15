@@ -124,4 +124,4 @@ class DialSetting extends Arc {
   }
 }
 
-export default DialSetting ;
+export default DialSetting;

@@ -9,8 +9,8 @@ router.get('/', function(req, res, next) {
     {id: 1, value:"120"},
     {id: 2, value:"100"},
   ];
-  var uri = "mongodb://192.168.1.76:27017/speedseed3",
-  db = mongojs(uri, ["testing"]);
+  var uri = "mongodb://localhost:27017/speedseed3",
+  db = mongojs(uri, ["settings"]);
 
   db.on('error', function (err) {
   console.log('database error', err)
@@ -20,10 +20,10 @@ router.get('/', function(req, res, next) {
   console.log('database connected')
   })
 
-  db.testing.find().limit(1).sort({$natural:-1}).toArray(function(err, result) {
+  db.settings.find().limit(1).sort({$natural:-1}).toArray(function(err, result) {
       if (err) throw err;
       console.log(result);
-      res.json(result);
+      res.json(result[0]);
   });
 });
 

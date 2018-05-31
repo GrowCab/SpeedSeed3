@@ -15,9 +15,10 @@ const customStyles = {
   };
 
 class Arc extends Component {
-  constructor() {
-    super();
-    this.arc = arc();  }
+  constructor(props) {
+    super(props);
+    this.arc = arc();
+}
 
   componentWillMount() {
       this.updateD3(this.props);
@@ -74,26 +75,6 @@ class DialSetting extends Arc {
             break;
         }
     }
-    
-    mouseOver() {
-        console.log("Mouse over!!");
-        this.setState({flipped:false});
-        this.updateD3({
-            padAngle:this.props.padAngle,
-            cornerRadius:this.props.cornerRadius,
-            innerRadius:this.props.innerRadius,
-            outerRadius:this.props.outerRadius+0.1*this.props.outerRadius
-        });
-    }
-    mouseOut() {
-        console.log("Mouse out!!");
-        this.setState({flipped:false});
-        this.updateD3({
-            padAngle:this.props.padAngle,
-            cornerRadius:this.props.cornerRadius,
-            innerRadius:this.props.innerRadius,
-            outerRadius:this.props.outerRadius});            
-    }
 
     openModal() {
 		this.setState({modalIsOpen: true});
@@ -122,10 +103,10 @@ class DialSetting extends Arc {
                 contentLabel="Edit modal">
                     <h2 ref={subtitle => this.subtitle = subtitle}>{this.title}</h2>
                     <ConfigForm onClick={this.closeModal}
-                        label={this.props.data.data.label}
-                        value={this.props.data.data.value}
-                        start={this.props.data.data.start} 
-                        end={this.props.data.data.end}
+                        label={this.props.data.data.max}
+                        value={this.props.data.data.max}
+                        start={("0" + this.props.data.data.start_hour).slice(-2) + ":" + ("0"+this.props.data.data.start_min).slice(-2)} 
+                        end={("0" + this.props.data.data.end_hour).slice(-2) + ":" + ("0"+this.props.data.data.end_min).slice(-2)} 
                         min={this.props.min}
                         max={this.props.max}
                         unit={this.props.unit}/>
@@ -133,7 +114,7 @@ class DialSetting extends Arc {
               {super.render()}
               <text transform={labelTranslate}
                     textAnchor="middle">
-                  {this.props.data.data.label} {this.props.unit}
+                  {(this.props.unit!="")?this.props.data.data.max:(this.props.data.data.max=="1")?"ON":"OFF"} {this.props.unit}
               </text>
           </g>
       );

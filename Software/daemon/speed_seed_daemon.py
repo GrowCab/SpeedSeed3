@@ -99,7 +99,7 @@ def getExpectedStatus():
                 ret["max_humidity"] = h["max"]
         for h in light:
             if h["start_hour"] <= now.hour <= h["end_hour"] and h["start_hour"] <= now.hour <= h["end_hour"]:
-                ret["light"] = h["status"]
+                ret["light"] = h["max"]
     except StopIteration:
         global default_settings
         default_settings['timestamp'] = now

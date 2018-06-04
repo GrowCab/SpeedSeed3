@@ -7,7 +7,70 @@ class App extends Component {
 
 	insertElement(element, data){
 		// Modify the values of the intervals in data with new element
-		
+		// Find overlapped elements, just under, included in new element and just above new element
+
+		let beg_bf_end_bf=[]
+		let beg_af_end_af=[]
+
+		let overlapped=[]
+		let beg_af_end_bf=[]
+		let end = 100*element.end_hour+element.end_min;
+		let start = 100*element.start_hour+element.start_min;
+		for (let i = 0; i < data.length; i++){
+			let o = {}
+			o.end = 100*data[i].end_hour+data[i].end_min;
+			o.start = 100*data[i].start_hour+data[i].start_min;
+
+			if (start <= o.start) {
+				if (end < o.start){
+					//OUT, is before
+				} else { // end > o.start
+					if (end >= o.end) {
+						// Overlap total
+						overlapped.push(i);
+					} else { // end < o.end
+						// begins before, ends before
+						beg_bf_end_bf.push(i);
+					}
+				}
+			} else { // start > o.start
+				if (end <= o.end) {
+					// Begins after, ends before
+					beg_af_end_bf.push(i);
+				} else { // end > o.end
+					if (start < o.end) {
+						// Begins after, ends after
+						beg_af_end_af.push(i);
+					} else { // start > o.end
+						// OUT, is after
+					}
+				}
+			}
+		}
+
+		// Fix array to place new element
+
+		if (beg_af_end_bf.length < 1){
+			let insertPosition = beg_af_end_af[0];
+			for (let i = 0; i < beg_bf_end_bf.length; i++){
+				data[beg_af_end_af[i]].start_hour = element.start_hour;
+				data[beg_af_end_af[i]].start_min = element.start_min;			
+			}
+			for (let i = 0; i < beg_af_end_af.length; i++){
+				data[beg_af_end_af[i]].end_hour = element.end_hour;
+				data[beg_af_end_af[i]].end_min = element.end_min;
+			}
+			data.splice(insertPosition, overlapped.length, element);
+		} else {
+
+			data.splice(beg_af_end_bf[0]+1, 0, element);
+			data[beg_af_end_bf[0]].end_hour = element.start_hour;
+			data[beg_af_end_bf[0]].end_min = element.start_min;
+			data[beg_af_end_bf[0]+2].start_hour = element.end_hour;
+			data[beg_af_end_bf[0]+2].start_min = element.end_min;
+
+		}
+
 	}
 
 	fixArrayValues(arr){

@@ -8,8 +8,8 @@ router.post('/', function(req, res, next) {
   console.log(req.body);
   var myJson = JSON.stringify(req.body);
   console.log(myJson);
-  var uri = "mongodb://192.168.1.76:27017/speedseed3",
-  db = mongojs(uri, ["testing"]);
+  var uri = "mongodb://localhost:27017/speedseed3",
+  db = mongojs(uri, ["settings"]);
 
   db.on('error', function (err) {
   console.log('database error', err)
@@ -19,7 +19,9 @@ router.post('/', function(req, res, next) {
   console.log('database connected')
   })
 
-  db.testing.save({myJson})
+  req.body.timestamp=new Date()
+  console.log(myJson)
+  db.settings.save(req.body)
   res.json(myJson);
 });
 

@@ -24,12 +24,9 @@ class Arc extends Component {
 
   render() {
     return (
-      <path d={this.arc(this.props.data)}
-            style={
-                {
-                    fill: this.props.color,
-                    border: "red"}
-                }
+      <path 
+        d={this.arc(this.props.data)}
+        style={{fill: this.props.color,}}
       />
   );
   }
@@ -38,7 +35,6 @@ class Arc extends Component {
 class DialSetting extends Arc {
     constructor(props) {
         super(props);
-        this.state = {isOpen:false};
         
         switch(props.unit) {
             case "":
@@ -61,7 +57,8 @@ class DialSetting extends Arc {
           labelTranslate = `translate(${labelX}, ${labelY})`;
 
       return (
-          <g onClick={this.props.onClick.bind(this, this.props)}>
+          <g onClick={this.props.onClick.bind(this, this.props)}
+          >
               {super.render()}
               <text transform={labelTranslate}
                     textAnchor="middle">

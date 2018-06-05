@@ -16,7 +16,8 @@ class App extends Component {
 		let beg_af_end_bf=[]
 		let end = 100*element.end_hour+element.end_min;
 		let start = 100*element.start_hour+element.start_min;
-		for (let i = 0; i < data.length; i++){
+		let i = 0;
+		for (i = 0; i < data.length; i++){
 			let o = {}
 			o.end = 100*data[i].end_hour+data[i].end_min;
 			o.start = 100*data[i].start_hour+data[i].start_min;
@@ -50,31 +51,37 @@ class App extends Component {
 
 		// Fix array to place new element
 
-		if (beg_af_end_bf.length < 1){
-			let insertPosition = beg_af_end_af[0];
-			for (let i = 0; i < beg_bf_end_bf.length; i++){
-				data[beg_af_end_af[i]].start_hour = element.start_hour;
-				data[beg_af_end_af[i]].start_min = element.start_min;			
+		let insertPosition = 0;
+		if (beg_bf_end_bf.length > 0){
+			insertPosition = beg_bf_end_bf[0];
+			for (i = 0; i < beg_bf_end_bf.length; i++){
+				data[beg_bf_end_bf[i]].start_hour = element.start_hour;
+				data[beg_bf_end_bf[i]].start_min = element.start_min;			
 			}
-			for (let i = 0; i < beg_af_end_af.length; i++){
+		}
+		if (beg_af_end_af.length > 0) {
+			insertPosition = Math.min(insertPosition, beg_af_end_af[0]);
+			for (i = 0; i < beg_af_end_af.length; i++){
 				data[beg_af_end_af[i]].end_hour = element.end_hour;
 				data[beg_af_end_af[i]].end_min = element.end_min;
 			}
+		}
+		if (overlapped.length > 0) {
 			data.splice(insertPosition, overlapped.length, element);
-		} else {
-
-			data.splice(beg_af_end_bf[0]+1, 0, element);
+		}
+		if (beg_af_end_bf.length > 0) {
+			data.splice(beg_af_end_bf[0]+1, 0, element, data[beg_af_end_bf[0]]);
 			data[beg_af_end_bf[0]].end_hour = element.start_hour;
 			data[beg_af_end_bf[0]].end_min = element.start_min;
 			data[beg_af_end_bf[0]+2].start_hour = element.end_hour;
 			data[beg_af_end_bf[0]+2].start_min = element.end_min;
-
 		}
 
 	}
 
 	fixArrayValues(arr){
-		for (let i = 0; i < arr.length; i++) {
+		let i = 0
+		for (i = 0; i < arr.length; i++) {
 			let hourSz = arr[i].end_hour - arr[i].start_hour;
 			let minSz = arr[i].end_min - arr[i].start_min;
 			arr[i].value = (hourSz*60+minSz)/1440 * 100;
@@ -86,6 +93,7 @@ class App extends Component {
 		let t = new Date()
 		this.state = {
 			devMonitors: "",
+			isOpen: false,
 			settings: {
 				"temperature": [
 					{value: 10, max: 10, position:1, start_hour:0, start_min:0, end_hour:8, end_min:0},
@@ -118,26 +126,26 @@ class App extends Component {
 		this.width = 300;
 		this.height = 300;
 
-		this.getItems = this.getItems.bind(this);
 		this.getSensors = this.getSensors.bind(this);
 		this.getSettings = this.getSettings.bind(this);
+		this.sendSettings = this.sendSettings.bind(this);
+		this.getItems = this.getItems.bind(this);
 		this.toggleModal = this.toggleModal.bind(this);
 		this.onChange = this.onChange.bind(this);
-		this.sendSettings = this.sendSettings.bind(this);
 		this.closeModal = this.closeModal.bind(this);
 	}
 
 	componentDidMount(){
 		this.getSensors();
 		this.getSettings();
-		this.timer = setInterval(()=> this.getItems(), 10000); // Get current state every 10s
-		setInterval( () => {
-			let t = new Date();
-			let stateCopy = this.state;
-			stateCopy.curTime = new Date()
-			stateCopy.arrowAngle = (((t.getHours()*60+t.getMinutes())/1440)*360*Math.PI/180)-Math.PI/2
-			this.setState(stateCopy)
-		  },60000); // Get time every 60s 
+		//this.timer = setInterval(()=> this.getItems(), 10000); // Get current state every 10s
+		// setInterval( () => {
+		// 	let t = new Date();
+		// 	let stateCopy = this.state;
+		// 	stateCopy.curTime = new Date()
+		// 	stateCopy.arrowAngle = (((t.getHours()*60+t.getMinutes())/1440)*360*Math.PI/180)-Math.PI/2
+		// 	this.setState(stateCopy)
+		//   },6000); // Get time every 60s 
 	}
 
 	getSensors() {
@@ -150,7 +158,12 @@ class App extends Component {
 			devMonitors.luminance = (res[0].light==="1")?"ON":"OFF"
 			devMonitors.humidity = res[0].humidity
 			stateCopy.devMonitors = devMonitors
-			this.setState(stateCopy)
+			this.setState({devMonitors: {
+				temperature: res[0].temperature,
+				luminance: (res[0].light==="1")?"ON":"OFF",
+				humidity: res[0].humidity
+			}
+			});
 		})
 		.catch(error => console.log("getSensors error:", error));
 
@@ -160,7 +173,7 @@ class App extends Component {
 		fetch('/getSettings')
 		.then(res => res.json())
 		.then(res => {
-			console.log(res)
+			console.log(res);
 			let stateCopy = this.state
 			this.fixArrayValues(res.humidity);
 			this.fixArrayValues(res.temperature);
@@ -168,9 +181,15 @@ class App extends Component {
 			stateCopy.settings.humidity = res.humidity;
 			stateCopy.settings.temperature = res.temperature;
 			stateCopy.settings.light = res.light;
-			this.setState(stateCopy)
-		})
-		.catch(error => console.log("getSettings error:", error));
+			this.setState({
+				settings: {
+					humidity: res.humidity,
+					temperature: res.temperature,
+					light: res.light
+				}
+			});
+		}).catch(error => console.log("getSettings error:", error));
+		console.log(this.state.settings);
 	}
 
 	getItems() {
@@ -220,6 +239,7 @@ class App extends Component {
     }
 	
 	sendSettings(e) {
+		e.preventDefault();
 		console.log("Data to send");
 		console.log(this.state.selectedItem);
 
@@ -251,7 +271,10 @@ class App extends Component {
 		})
 		.then(function(res){ return res.json(); })
         .then(function(data){ console.log( JSON.stringify( data ) ) })
-        .catch(error => console.log("sendSettings error: ", error));
+		.catch(error => console.log("sendSettings error: ", error));
+		this.setState({
+			isOpen: !this.state.isOpen
+		});
 	}
 
 	onChange(event) {

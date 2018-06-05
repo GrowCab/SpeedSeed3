@@ -3,17 +3,10 @@ var router = express.Router();
 var http = require("http");
 var mongojs = require("mongojs");
 
-var uri = "mongodb://localhost:27017/speedseed3";
-//    db = mongojs(uri, ["sensors"]);
+var uri = "mongodb://149.155.221.253:27017/speedseed3";
+
 /* GET users listing. */
 router.get('/', function(req, res, next) {
-
-  var myJson = {
-    humidity: "50",
-    temperature: "30",
-    luminance: "OFF",
-  };
-//  res.json(myJson);
 
   db = mongojs(uri, ["sensors"]);
 

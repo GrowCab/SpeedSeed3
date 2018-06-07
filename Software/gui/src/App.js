@@ -138,14 +138,14 @@ class App extends Component {
 	componentDidMount(){
 		this.getSensors();
 		this.getSettings();
-		//this.timer = setInterval(()=> this.getItems(), 10000); // Get current state every 10s
-		// setInterval( () => {
-		// 	let t = new Date();
-		// 	let stateCopy = this.state;
-		// 	stateCopy.curTime = new Date()
-		// 	stateCopy.arrowAngle = (((t.getHours()*60+t.getMinutes())/1440)*360*Math.PI/180)-Math.PI/2
-		// 	this.setState(stateCopy)
-		//   },6000); // Get time every 60s 
+		this.timer = setInterval(()=> this.getItems(), 10000); // Get current state every 10s
+		this.clockTimer = setInterval( () => {
+			let t = new Date();
+			let stateCopy = this.state;
+			stateCopy.curTime = new Date()
+			stateCopy.arrowAngle = (((t.getHours()*60+t.getMinutes())/1440)*360*Math.PI/180)-Math.PI/2
+			this.setState(stateCopy)
+		  },6000); // Get time every 60s 
 	}
 
 	getSensors() {
@@ -199,6 +199,7 @@ class App extends Component {
 	
 	componentWillUnmount() {
 		this.timer = null;
+		this.clockTimer = null;
 	}
 
 	closeModal() {

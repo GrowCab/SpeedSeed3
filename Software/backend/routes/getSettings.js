@@ -3,8 +3,7 @@ var router = express.Router();
 var fs = require("fs");
 var mongojs = require("mongojs")
 
-var uri = "mongodb://149.155.221.253:27017/speedseed3";
-
+var uri = "mongodb://"+process.env.mongoserver+":27017/speedseed3";
 /* SET settings listing. */
 router.get('/', function(req, res, next) {
 

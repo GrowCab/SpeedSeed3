@@ -8,7 +8,7 @@ router.post('/', function(req, res, next) {
   console.log(req.body);
   var myJson = JSON.stringify(req.body);
   console.log(myJson);
-  var uri = "mongodb://149.155.221.253:27017/speedseed3",
+  var uri = "mongodb://"+process.env.mongoserver+":27017/speedseed3",
   db = mongojs(uri, ["settings"]);
 
   db.on('error', function (err) {

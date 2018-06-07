@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+import argparse
 import serial.tools.list_ports
 import time
 import pymongo
@@ -186,8 +188,13 @@ def run():
     logger = logging.getLogger()
     logger.addHandler(log_handler)
     logger.setLevel(logging.DEBUG)
-
-    client = MongoClient('mongodb://127.0.0.1:27017')
+    
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--server', default="127.0.0.1")
+    args = parser.parse_args()
+    clientString = "mongodb://"+args.server+":27017"
+    print(clientString)
+    client = MongoClient(clientString)
     db = client['speedseed3']
     print(str(db))
     time.sleep(1)

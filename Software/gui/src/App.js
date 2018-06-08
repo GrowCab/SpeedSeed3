@@ -5,7 +5,7 @@ import ConfigForm from "./components/ConfigForm";
 
 class App extends Component {
 
-	insertElement(element, data){
+	insertElement(e, data){
 		// Modify the values of the intervals in data with new element
 		// Find overlapped elements, just under, included in new element and just above new element
 
@@ -14,69 +14,48 @@ class App extends Component {
 
 		let overlapped=[]
 		let beg_af_end_bf=[]
-		let end = 100*element.end_hour+element.end_min;
-		let start = 100*element.start_hour+element.start_min;
+		let end = 100*e.end_hour+e.end_min;
+		let start = 100*e.start_hour+e.start_min;
 		let i = 0;
-		for (i = 0; i < data.length; i++){
+		for (i = 0; i < data.length; i++) {
 			let o = {}
 			o.end = 100*data[i].end_hour+data[i].end_min;
 			o.start = 100*data[i].start_hour+data[i].start_min;
 
 			if (start <= o.start) {
-				if (end < o.start){
-					//OUT, is before
-				} else { // end > o.start
-					if (end >= o.end) {
-						// Overlap total
-						overlapped.push(i);
-					} else { // end < o.end
-						// begins before, ends before
-						beg_bf_end_bf.push(i);
-					}
-				}
-			} else { // start > o.start
-				if (end <= o.end) {
-					// Begins after, ends before
-					beg_af_end_bf.push(i);
-				} else { // end > o.end
-					if (start < o.end) {
-						// Begins after, ends after
-						beg_af_end_af.push(i);
-					} else { // start > o.end
-						// OUT, is after
+				if (end >= o.start) {
+					// Contained or intersecting from o.start to end
+					if (end < o.end) {
+						// Intersection from o.start to end
+						console.log(start+","+end + "\t" + o.start+","+o.end)
+					} else {
+						// e contains o fully
+						overlapped.push(i)
+						console.log(start+","+end + "\t" + o.start+","+o.end)
 					}
 				}
 			}
-		}
-
-		// Fix array to place new element
-
-		let insertPosition = 0;
-		if (beg_bf_end_bf.length > 0){
-			insertPosition = beg_bf_end_bf[0];
-			for (i = 0; i < beg_bf_end_bf.length; i++){
-				data[beg_bf_end_bf[i]].start_hour = element.start_hour;
-				data[beg_bf_end_bf[i]].start_min = element.start_min;			
+			else { // start > o.start
+				if (start < o.end){
+					// Check if e is within o or intersecting between start and o.end
+					if (end < o.end) {
+						// e is within o
+						console.log(start+","+end + "\t" + o.start+","+o.end)
+					} else { // end >= o.end
+						// intersecting between start and o.end
+						console.log(start+","+end + "\t" + o.start+","+o.end)
+					}
+				} 
 			}
 		}
-		if (beg_af_end_af.length > 0) {
-			insertPosition = Math.min(insertPosition, beg_af_end_af[0]);
-			for (i = 0; i < beg_af_end_af.length; i++){
-				data[beg_af_end_af[i]].end_hour = element.end_hour;
-				data[beg_af_end_af[i]].end_min = element.end_min;
-			}
+		let elementToInsert = {
+			end_min: e.end_min,
+			start_min: e.start_min,
+			end_hour: e.end_hour,
+			start_hour: e.start_hour,
+			max: e.value,
 		}
-		if (overlapped.length > 0) {
-			data.splice(insertPosition, overlapped.length, element);
-		}
-		if (beg_af_end_bf.length > 0) {
-			data.splice(beg_af_end_bf[0]+1, 0, element, data[beg_af_end_bf[0]]);
-			data[beg_af_end_bf[0]].end_hour = element.start_hour;
-			data[beg_af_end_bf[0]].end_min = element.start_min;
-			data[beg_af_end_bf[0]+2].start_hour = element.end_hour;
-			data[beg_af_end_bf[0]+2].start_min = element.end_min;
-		}
-
+		data.splice(overlapped[0], overlapped.length, elementToInsert)
 	}
 
 	fixArrayValues(arr){
@@ -276,6 +255,7 @@ class App extends Component {
 		this.setState({
 			isOpen: !this.state.isOpen
 		});
+		this.getSettings();
 	}
 
 	onChange(event) {

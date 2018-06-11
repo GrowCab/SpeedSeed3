@@ -28,6 +28,7 @@ class App extends Component {
 					if (end < o.end) {
 						// Intersection from o.start to end
 						console.log(start+","+end + "\t" + o.start+","+o.end)
+						beg_bf_end_bf.push(i);
 					} else {
 						// e contains o fully
 						overlapped.push(i)
@@ -41,9 +42,11 @@ class App extends Component {
 					if (end < o.end) {
 						// e is within o
 						console.log(start+","+end + "\t" + o.start+","+o.end)
+						beg_af_end_bf.push(i);
 					} else { // end >= o.end
 						// intersecting between start and o.end
 						console.log(start+","+end + "\t" + o.start+","+o.end)
+						beg_af_end_af.push(i)
 					}
 				} 
 			}
@@ -55,7 +58,34 @@ class App extends Component {
 			start_hour: e.start_hour,
 			max: e.value,
 		}
-		data.splice(overlapped[0], overlapped.length, elementToInsert)
+
+		if (beg_af_end_af.length > 0) {
+			data[beg_af_end_af[0]].end_hour = elementToInsert.start_hour
+			data[beg_af_end_af[0]].end_min = elementToInsert.start_min-1
+		}
+
+		if (beg_bf_end_bf.length > 0) {
+			let carry = (e.end_min==59)
+			data[beg_bf_end_bf[0]].start_min = (e.end_min==59)?0:e.end_min+1;
+			data[beg_bf_end_bf[0]].start_hour = e.end_hour + (carry)?1:0;
+			data.splice(beg_bf_end_bf[0], 0, elementToInsert);
+		}
+
+		if (overlapped.length > 0) {
+			data.splice(overlapped[0], overlapped.length, elementToInsert)
+		}
+		if (beg_af_end_bf.length > 0) {
+			let insAfter = {
+				end_min: data[beg_af_end_bf[0]].end_min,
+				end_hour: data[beg_af_end_bf[0]].end_hour,
+				start_min: elementToInsert.end_min,
+				start_hour: elementToInsert.end_hour,
+				max: data[beg_af_end_bf[0]].max
+			}
+			data[beg_af_end_bf[0]].end_hour = elementToInsert.start_hour
+			data[beg_af_end_bf[0]].end_min = elementToInsert.start_min
+			data.splice(beg_af_end_bf[0]+1, 0, elementToInsert, insAfter)
+		}
 	}
 
 	fixArrayValues(arr){
@@ -111,6 +141,8 @@ class App extends Component {
 		this.getItems = this.getItems.bind(this);
 		this.toggleModal = this.toggleModal.bind(this);
 		this.onChange = this.onChange.bind(this);
+		this.startTimeChange = this.startTimeChange.bind(this);
+		this.endTimeChange = this.endTimeChange.bind(this);
 		this.closeModal = this.closeModal.bind(this);
 	}
 
@@ -258,6 +290,24 @@ class App extends Component {
 		this.getSettings();
 	}
 
+	startTimeChange(event) {
+        // If the unit is "" it means illumination so the labe and only
+        // ever be either "ON" or "OFF", sorry for the hack (ternary inside ternary)		
+		let newState = this.state;
+		newState.selectedItem.start_hour = parseInt(event.target.value.split(":")[0]);
+		newState.selectedItem.start_min =  parseInt(event.target.value.split(":")[1]);
+		this.setState(newState);
+	}
+
+	endTimeChange(event) {
+        // If the unit is "" it means illumination so the labe and only
+        // ever be either "ON" or "OFF", sorry for the hack (ternary inside ternary)		
+		let newState = this.state;
+		newState.selectedItem.end_hour = parseInt(event.target.value.split(":")[0]);
+		newState.selectedItem.end_min =  parseInt(event.target.value.split(":")[1]);
+		this.setState(newState);
+	}
+
 	onChange(event) {
         // If the unit is "" it means illumination so the labe and only
         // ever be either "ON" or "OFF", sorry for the hack (ternary inside ternary)
@@ -310,13 +360,13 @@ class App extends Component {
 							<div className="form-group row">
 								<label className="col-sm-2 col-form-label" htmlFor="fromInput">From:</label>
 								<div className="col-sm-10">
-								<input type="time" defaultValue={this.state.selectedItem.start}/>
+								<input type="time" defaultValue={this.state.selectedItem.start} onChange={this.startTimeChange}/>
 								</div>
 							</div>
 							<div className="form-group row">
 								<label className="col-sm-2 col-form-label"  htmlFor="toInput">To:</label>
 								<div className="col-sm-10">
-								<input type="time" defaultValue={this.state.selectedItem.end}/>
+								<input type="time" defaultValue={this.state.selectedItem.end} onChange={this.endTimeChange}/>
 								</div>
 							</div>
 							<div className="form-group row">

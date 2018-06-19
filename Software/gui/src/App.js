@@ -132,8 +132,8 @@ class App extends Component {
 		this.fixArrayValues(this.state.settings.humidity);
 		this.fixArrayValues(this.state.settings.light);
 		this.pAngle = 0.012;
-		this.width = 300;
-		this.height = 300;
+		this.width = 220;
+		this.height = 200;
 
 		this.getSensors = this.getSensors.bind(this);
 		this.getSettings = this.getSettings.bind(this);
@@ -329,22 +329,18 @@ class App extends Component {
 				</header>
 				<p className="App-intro"></p>
 				<div >
-					<div className="row">
-						<div className="col-sm-4">
+					<div >
+						<div style={{verticalAlign: "centre"}}>
 							<svg height={this.height} width={this.width}>
 								<DialControl arrowAngle={this.state.arrowAngle} unit="C" currentValue={this.state.devMonitors.temperature} x={100} y={100} outerRadius={100} innerRadius={50} padAngle={this.pAngle} 
 									data={this.state.settings.temperature} min="10" max="30" onClick={this.toggleModal}
 								/>
 							</svg>
-						</div>
-						<div className="col-sm-4">
 							<svg height={this.height} width={this.width}>
 								<DialControl arrowAngle={this.state.arrowAngle} unit="" currentValue={this.state.devMonitors.luminance} x={100} y={100} outerRadius={100} innerRadius={50} padAngle={this.pAngle}
 									data={this.state.settings.light} min="0" max="1" onClick={this.toggleModal}
 								/>
 							</svg>
-						</div>
-						<div className="col-sm-4">
 							<svg height={this.height} width={this.width}>
 								<DialControl arrowAngle={this.state.arrowAngle} unit="%" currentValue={this.state.devMonitors.humidity} x={100} y={100} outerRadius={100} innerRadius={50} padAngle={this.pAngle}
 									data={this.state.settings.humidity} min="15" max="70" onClick={this.toggleModal}

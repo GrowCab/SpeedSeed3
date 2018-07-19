@@ -1,31 +1,10 @@
 module.exports = function(app) {
+  // Pull in the Schema class from mongoose.
   const Schema = app.locals.mongoose.Schema;
+  // Set the name of the collection/schema for mongoose.
+  const SchemaName = "Settings";
 
-  // Schema for storing Error messages.
-  let ErrorSchema = new Schema({
-    error_type: {
-      type: String,
-      enum: ['Unknown command', 'Unable to parse data']
-    },
-    metadata: Schema.Types.Mixed,
-    timestamp: Date
-  })
-
-  // Schema for storing Sensor Status data.
-  let StatusSchema = new Schema({
-    humidity: Number,
-    temperature: Number,
-    peltier_cool_status: Boolean,
-    humidity_fan_status: Boolean,
-    max_humidity: Number,
-    max_tmp: Number,
-    min_tmp: Number,
-    light: Boolean,
-    visible_lux: Number,
-    missed_temp_reads: Number,
-    timestamp: Date
-  })
-
+  // Schema for managing system temperature settings.
   let TemperatureSettingSchema = new Schema({
     start_hour: {
       type: Number,
@@ -50,6 +29,7 @@ module.exports = function(app) {
     max: Number
   })
 
+  // Schema for managing system humidity settings.
   let HumiditySettingSchema = new Schema({
     start_hour: {
       type: Number,
@@ -74,6 +54,7 @@ module.exports = function(app) {
     max: Number
   })
 
+  // Schema for managing system lighting schedule settings.
   let LightSettingSchema = new Schema({
     start_hour: {
       type: Number,
@@ -107,7 +88,12 @@ module.exports = function(app) {
     temperature: [TemperatureSettingSchema],
     humidity: [HumiditySettingSchema],
     light: [LightSettingSchema],
-    timestamp: Date
+    timestamp: {
+      type: Date,
+      default: Date.now
+    }
   })
 
+  // Create a model of this schema using our app's mongoose object.
+  app.locals.mongoose.model(SchemaName, ErrorSchema);
 }

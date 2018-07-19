@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 let express = require('express');
-//let cors = require('cors');
-//let compression = require('compression');
+let cors = require('cors');
+let compression = require('compression');
 let bodyParser = require('body-parser');
 let logger = require('morgan');
 let debug = require('debug')('backend:server');
@@ -60,8 +60,8 @@ app.on('mongo_ready', function() {
   // Load in express app middleware.
   console.log('Database ready, loading middleware...');
   app.use(logger('dev'));
-  //app.use(cors());
-  //app.use(compression());
+  app.use(cors());
+  app.use(compression());
   app.use(bodyParser.json());
   app.use(bodyParser.urlencoded({ extended: false }));
 

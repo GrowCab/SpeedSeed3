@@ -33,3 +33,6 @@
 *.app
 Software/gui/.vscode/launch.json
 Software/.vscode/launch.json
+
+# Ignore docker data directories
+docker

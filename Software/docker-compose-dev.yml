@@ -1,0 +1,26 @@
+version: '2'
+services:
+  backend:
+    build:
+      context: ./backend/
+      args:
+        NODE_ENV: 'test'
+        PORT: 3001
+        DATABASE_TEST: 'mongodb://db:27017/speedseed3'
+        DATABASE_PROD: 'mongodb://db:27017/speedseed3'
+    ports:
+      - 3001:3001
+    links:
+      - db
+    depends_on:
+      - db
+    volumes:
+      - ./backend:/app
+  db:
+    image: mongo
+    environment:
+      MONGO_INITDB_DATABASE : 'speedseed3'
+    volumes:
+      - ./docker/data:/data/db
+    ports:
+      - 27017:27017

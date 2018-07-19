@@ -160,7 +160,7 @@ class App extends Component {
 	}
 
 	getSensors() {
-		fetch('/status')
+		fetch(process.env.REACT_APP_API_URL + '/status')
 		.then(res => res.json())
 		.then(res => {
 			let stateCopy = this.state
@@ -181,7 +181,7 @@ class App extends Component {
 	}
 
 	getSettings() {
-		fetch('/settings')
+		fetch(process.env.REACT_APP_API_URL + '/settings')
 		.then(res => res.json())
 		.then(res => {
 			console.log(res);

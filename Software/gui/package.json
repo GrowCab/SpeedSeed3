@@ -30,6 +30,5 @@
   "devDependencies": {
     "eslint": "^4.17.0",
     "eslint-plugin-react": "^7.6.1"
-  },
-  "proxy": "http://backend:3001"
+  }
 }

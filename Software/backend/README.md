@@ -9,7 +9,7 @@ This program depends on docker and docker-compose. Please see install instructio
 If you want to run the API as a standalone either on the same hardware as the frontend code or on a remote server.
 
 **Make sure you're in the correct directory.**
-Directory: /SpeedSeed3/Software
+Directory: /SpeedSeed3/Software/backend
 **Run the following command**
   ```sh
     $ docker build -t speedseed3api \

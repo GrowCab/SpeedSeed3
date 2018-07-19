@@ -1,0 +1,43 @@
+version: '2'
+services:
+  backend:
+    build:
+      context: ./backend/
+      args:
+        NODE_ENV: 'test'
+        PORT: 3001
+        DATABASE_TEST: 'mongodb://db:27017/speedseed3'
+        DATABASE_PROD: 'mongodb://db:27017/speedseed3'
+    ports:
+      - 3001:3001
+    links:
+      - db
+    depends_on:
+      - db
+    volumes:
+      - ./backend:/app
+  frontend:
+    build:
+      context: ./gui/
+      args:
+        NODE_ENV: 'test'
+        PORT: 3002
+        REACT_APP_API_URL: 'http://localhost:3001'
+    ports:
+      - 3002:3002
+    links:
+      - db
+      - backend
+    depends_on:
+      - db
+      - backend
+    volumes:
+      - ./gui:/app
+  db:
+    image: mongo
+    environment:
+      MONGO_INITDB_DATABASE : 'speedseed3'
+    volumes:
+      - ./docker/data:/data/db
+    ports:
+      - 27017:27017

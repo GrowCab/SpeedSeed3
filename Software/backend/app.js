@@ -1,52 +1,83 @@
-var express = require('express');
-var path = require('path');
-var favicon = require('serve-favicon');
-var logger = require('morgan');
-var cookieParser = require('cookie-parser');
-var bodyParser = require('body-parser');
+#!/usr/bin/env node
+let express = require('express');
+let cors = require('cors');
+let compression = require('compression');
+let bodyParser = require('body-parser');
+let logger = require('morgan');
+let debug = require('debug')('backend:server');
 
-var index = require('./routes/index');
-var users = require('./routes/users');
-var getMonitors = require('./routes/getMonitors');
-var setSettings = require('./routes/setSettings');
-var getSettings = require('./routes/getSettings');
+// Create new express app.
+let app = express();
 
-var app = express();
+// Add in mongoose and connect to database.
+require('./mongoose')(app);
 
-// view engine setup
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'jade');
+/**
+ * Normalize a port into a number, string, or false.
+ */
+function normalizePort(val) {
+  var port = parseInt(val, 10);
 
-// uncomment after placing your favicon in /public
-//app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
-app.use(logger('dev'));
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
+  if (isNaN(port)) {
+    // named pipe
+    return val;
+  }
 
-app.use('/', index);
-app.use('/users', users);
-app.use('/getMonitors', getMonitors);
-app.use('/setSettings', setSettings);
-app.use('/getSettings', getSettings);
+  if (port >= 0) {
+    // port number
+    return port;
+  }
 
-// catch 404 and forward to error handler
-app.use(function(req, res, next) {
-  var err = new Error('Not Found');
-  err.status = 404;
-  next(err);
-});
+  return false;
+}
 
-// error handler
-app.use(function(err, req, res, next) {
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
+function onError(error) {
+  if (error.syscall !== 'listen') {
+    throw error;
+  }
 
-  // render the error page
-  res.status(err.status || 500);
-  res.render('error');
-});
+  var bind = typeof port === 'string'
+    ? 'Pipe ' + port
+    : 'Port ' + port;
 
-module.exports = app;
+  // handle specific listen errors with friendly messages
+  switch (error.code) {
+    case 'EACCES':
+      console.error(bind + ' requires elevated privileges');
+      process.exit(1);
+      break;
+    case 'EADDRINUSE':
+      console.error(bind + ' is already in use');
+      process.exit(1);
+      break;
+    default:
+      throw error;
+  }
+}
+
+// When database in docker container is ready for connections...
+app.on('mongo_ready', function() {
+  // Load in express app middleware.
+  console.log('Database ready, loading middleware...');
+  app.use(logger('dev'));
+  app.use(cors());
+  app.use(compression());
+  app.use(bodyParser.json());
+  app.use(bodyParser.urlencoded({ extended: false }));
+
+  // Pull in schemas
+  console.log("Loading schemas...");
+  require('./schemas/Errors')(app);
+  require('./schemas/Settings')(app);
+  require('./schemas/Status')(app);
+
+  // Start API endpoints
+  console.log("Loading API endpoints...");
+  require('./routes/Settings')(app);
+  require('./routes/Status')(app);
+
+  // Start app
+  var port = normalizePort(process.env.PORT || '3000');
+  app.listen(process.env.PORT);
+  console.log("Listening on: " + process.env.PORT)
+})

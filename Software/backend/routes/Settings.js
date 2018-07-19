@@ -30,7 +30,7 @@ module.exports = function(app) {
   */
   app.post('/settings', function(req, res) {
     let settings = req.body;
-    SettingsModel.create(new_settings, function(err, new_settings) {
+    SettingsModel.create(settings, function(err, new_settings) {
       if(err) {
         res.status(500);
         res.json({

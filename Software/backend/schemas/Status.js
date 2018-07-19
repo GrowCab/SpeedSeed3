@@ -23,5 +23,5 @@ module.exports = function(app) {
   })
 
   // Create a model of this schema using our app's mongoose object.
-  app.locals.mongoose.model(SchemaName, ErrorSchema);
+  app.locals.mongoose.model(SchemaName, StatusSchema);
 }

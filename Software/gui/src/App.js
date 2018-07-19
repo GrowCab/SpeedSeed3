@@ -48,7 +48,7 @@ class App extends Component {
 						console.log(start+","+end + "\t" + o.start+","+o.end)
 						beg_af_end_af.push(i)
 					}
-				} 
+				}
 			}
 		}
 		let elementToInsert = {
@@ -127,7 +127,7 @@ class App extends Component {
 				start: "00:00", end:"23:59", value: 20, unit: "C", label: 20
 			}
 		}
-	
+
 		this.fixArrayValues(this.state.settings.temperature);
 		this.fixArrayValues(this.state.settings.humidity);
 		this.fixArrayValues(this.state.settings.light);
@@ -156,11 +156,11 @@ class App extends Component {
 			stateCopy.curTime = new Date()
 			stateCopy.arrowAngle = (((t.getHours()*60+t.getMinutes())/1440)*360*Math.PI/180)-Math.PI/2
 			this.setState(stateCopy)
-		  },6000); // Get time every 60s 
+		  },6000); // Get time every 60s
 	}
 
 	getSensors() {
-		fetch('/getMonitors')
+		fetch('/status')
 		.then(res => res.json())
 		.then(res => {
 			let stateCopy = this.state
@@ -181,7 +181,7 @@ class App extends Component {
 	}
 
 	getSettings() {
-		fetch('/getSettings')
+		fetch('/settings')
 		.then(res => res.json())
 		.then(res => {
 			console.log(res);
@@ -207,7 +207,7 @@ class App extends Component {
 		this.getSensors();
 		this.getSettings();
 	}
-	
+
 	componentWillUnmount() {
 		this.timer = null;
 		this.clockTimer = null;
@@ -216,6 +216,7 @@ class App extends Component {
 	closeModal() {
 		this.setState({isOpen: false});
 	}
+
 	toggleModal(clickedData, e) {
         this.setState({
           isOpen: !this.state.isOpen
@@ -249,7 +250,7 @@ class App extends Component {
 		});
 		console.log(clickedData);
     }
-	
+
 	sendSettings(e) {
 		e.preventDefault();
 		console.log("Data to send");
@@ -292,7 +293,7 @@ class App extends Component {
 
 	startTimeChange(event) {
         // If the unit is "" it means illumination so the labe and only
-        // ever be either "ON" or "OFF", sorry for the hack (ternary inside ternary)		
+        // ever be either "ON" or "OFF", sorry for the hack (ternary inside ternary)
 		let newState = this.state;
 		newState.selectedItem.start_hour = parseInt(event.target.value.split(":")[0]);
 		newState.selectedItem.start_min =  parseInt(event.target.value.split(":")[1]);
@@ -301,7 +302,7 @@ class App extends Component {
 
 	endTimeChange(event) {
         // If the unit is "" it means illumination so the labe and only
-        // ever be either "ON" or "OFF", sorry for the hack (ternary inside ternary)		
+        // ever be either "ON" or "OFF", sorry for the hack (ternary inside ternary)
 		let newState = this.state;
 		newState.selectedItem.end_hour = parseInt(event.target.value.split(":")[0]);
 		newState.selectedItem.end_min =  parseInt(event.target.value.split(":")[1]);
@@ -314,13 +315,13 @@ class App extends Component {
         let val = (this.state.selectedItem.unit==="")?
                 (event.target.value==="0")?"OFF":"ON" :
 				event.target.value;
-		
+
 		let newState = this.state;
 		newState.selectedItem.value = event.target.value;
 		newState.selectedItem.label = val;
 		this.setState(newState);
 	}
-	
+
 	render() {
 		return (
 			<div className="App">
@@ -332,7 +333,7 @@ class App extends Component {
 					<div >
 						<div style={{verticalAlign: "centre"}}>
 							<svg height={this.height} width={this.width}>
-								<DialControl arrowAngle={this.state.arrowAngle} unit="C" currentValue={this.state.devMonitors.temperature} x={100} y={100} outerRadius={100} innerRadius={50} padAngle={this.pAngle} 
+								<DialControl arrowAngle={this.state.arrowAngle} unit="C" currentValue={this.state.devMonitors.temperature} x={100} y={100} outerRadius={100} innerRadius={50} padAngle={this.pAngle}
 									data={this.state.settings.temperature} min="10" max="30" onClick={this.toggleModal}
 								/>
 							</svg>
@@ -370,7 +371,7 @@ class App extends Component {
 								<div className="col-sm-10">
 									<input id="valueInput" type="range"
 										value={this.state.selectedItem.value}
-										min={this.state.selectedItem.min} max={this.state.selectedItem.max} 
+										min={this.state.selectedItem.min} max={this.state.selectedItem.max}
 										onChange={this.onChange}
 									/>
 									<label>{this.state.selectedItem.label}</label>

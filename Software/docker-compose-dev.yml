@@ -16,6 +16,22 @@ services:
       - db
     volumes:
       - ./backend:/app
+  frontend:
+    build:
+      context: ./gui/
+      args:
+        NODE_ENV: 'test'
+        PORT: 3002
+    ports:
+      - 3002:3002
+    links:
+      - db
+      - backend
+    depends_on:
+      - db
+      - backend
+    volumes:
+      - ./gui:/app
   db:
     image: mongo
     environment:

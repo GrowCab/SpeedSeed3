@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "ajv": "^6.5.4",
     "d3": "^4.12.2",
     "d3-array": "^1.2.1",
     "d3-axis": "^1.0.8",
@@ -13,13 +14,11 @@
     "d3-shape": "^1.2.0",
     "d3-svg-legend": "^2.25.4",
     "d3-transition": "^1.1.1",
-    "react": "^16.3.2",
+    "react": "^16.5.2",
     "react-d3-basic": "^1.6.11",
     "react-dom": "^16.3.2",
     "react-modal": "^3.4.4",
-    "react-scripts": "1.1.0",
-    "react-times": "^2.2.8",
-    "xspans": "^1.0.0"
+    "react-scripts": "^2.0.2"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -29,7 +28,7 @@
   },
   "proxy": "http://localhost:3001",
   "devDependencies": {
-    "eslint": "^4.17.0",
+    "eslint": "^4.19.1",
     "eslint-plugin-react": "^7.6.1"
   }
 }

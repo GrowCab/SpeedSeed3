@@ -1,28 +1,21 @@
 var express = require('express');
 var router = express.Router();
-var http = require("http");
-var mongojs = require("mongojs");
+var Influx = require("influx");
 
-var uri = "mongodb://"+process.env.mongoserver+":27017/speedseed3";
+const influx = new Influx.InfluxDB({
+  host: 'localhost',
+  database: 'speedseed3'
+});
 
 /* GET users listing. */
 router.get('/', function(req, res, next) {
+    influx.query(`
+        select * from sensors
+        `)
+        .then( result => response.status(200).json(result) )
+        .catch( error => response.status(500).json({ error }) );
 
-  db = mongojs(uri, ["sensors"]);
-
-  db.on('error', function (err) {
-  console.log('database error', err)
-  })
-
-  db.on('connect', function () {
-  console.log('database connected')
-  })
-
-  db.sensors.find().limit(1).sort({$natural:-1}).toArray(function(err, result) {
-      if (err) throw err;
-      console.log(result);
-      res.json(result);
-  });
+    res.json(result);
 
 });
 

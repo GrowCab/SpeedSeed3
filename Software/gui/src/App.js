@@ -349,7 +349,7 @@ class App extends Component {
 							<div className="form-group row">
 								<label className="col-sm-2 col-form-label" htmlFor="fromInput">From:</label>
 								<div className="col-sm-10">
-								<input type="time" defaultValue={this.state.selectedItem.start} onChange={this.startTimeChange}/>
+								<input disabled={true} type="time" defaultValue={this.state.selectedItem.start} onChange={this.startTimeChange}/>
 								</div>
 							</div>
 							<div className="form-group row">

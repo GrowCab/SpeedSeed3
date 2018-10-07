@@ -4,96 +4,88 @@ import DialControl from "./components/DialControl";
 import ConfigForm from "./components/ConfigForm";
 
 class App extends Component {
+	doesOverlap(a,b){
+		return (Math.min(a.end_time,b.end_time) >= Math.max(a.start_time,b.start_time));
+	}
+	
+	addMinute(a){
+		if ((a%100)/59 >= 1){
+			a=Math.floor(a/100)*100+100;
+			if (a > 2359) {
+				a = 2359
+			}
+		} else {
+			a=a+1;
+		}
+		return a;
+	}
 
+	delMinute(a) {
+		return a%100==0?(a-41<0)?0:a-41:a-1;
+	}
+	
 	insertElement(e, data){
-		// Modify the values of the intervals in data with new element
-		// Find overlapped elements, just under, included in new element and just above new element
+	// The interval 0000 - 2359 shall always be complete
+	// The new element can be:
+	let newData = [];
+	let elementToInsert = {
+		start_time: e.start.split(":")[0]*100+parseInt(e.start.split(":")[1]),
+		end_time: e.end.split(":")[0]*100+parseInt(e.end.split(":")[1]),
+		max: e.value
+	}
+	let insertIndex = e.itemIndex;
+	console.log("New data to send!\n" + newData);
+	console.log("Element to insert!\n" + JSON.stringify(elementToInsert));
+	let n = data.length;
+	let i = 0;
 
-		let beg_bf_end_bf=[]
-		let beg_af_end_af=[]
+	// Find lowest index elementToInsert starts before
+	while (this.doesOverlap(elementToInsert, data[insertIndex]) && insertIndex > 0){
+		insertIndex--;
+	}
+	let firstIndexOverlapped=insertIndex;
 
-		let overlapped=[]
-		let beg_af_end_bf=[]
-		let end = 100*e.end_hour+e.end_min;
-		let start = 100*e.start_hour+e.start_min;
-		let i = 0;
-		for (i = 0; i < data.length; i++) {
-			let o = {}
-			o.end = 100*data[i].end_hour+data[i].end_min;
-			o.start = 100*data[i].start_hour+data[i].start_min;
+	while(i < firstIndexOverlapped) {
+		newData.push(data[i]);
+		i++;
+	}
 
-			if (start <= o.start) {
-				if (end >= o.start) {
-					// Contained or intersecting from o.start to end
-					if (end < o.end) {
-						// Intersection from o.start to end
-						console.log(start+","+end + "\t" + o.start+","+o.end)
-						beg_bf_end_bf.push(i);
-					} else {
-						// e contains o fully
-						overlapped.push(i)
-						console.log(start+","+end + "\t" + o.start+","+o.end)
-					}
-				}
-			}
-			else { // start > o.start
-				if (start < o.end){
-					// Check if e is within o or intersecting between start and o.end
-					if (end < o.end) {
-						// e is within o
-						console.log(start+","+end + "\t" + o.start+","+o.end)
-						beg_af_end_bf.push(i);
-					} else { // end >= o.end
-						// intersecting between start and o.end
-						console.log(start+","+end + "\t" + o.start+","+o.end)
-						beg_af_end_af.push(i)
-					}
-				} 
-			}
-		}
-		let elementToInsert = {
-			end_min: e.end_min,
-			start_min: e.start_min,
-			end_hour: e.end_hour,
-			start_hour: e.start_hour,
-			max: e.value,
-		}
+	if (data[firstIndexOverlapped].start_time < elementToInsert.start_time) {
+		newData.push({
+			start_time: data[firstIndexOverlapped].start_time,
+			end_time: this.delMinute(elementToInsert.start_time),
+			max: data[firstIndexOverlapped].max
+		});
+	}
+	newData.push(elementToInsert);
 
-		if (beg_af_end_af.length > 0) {
-			data[beg_af_end_af[0]].end_hour = elementToInsert.start_hour
-			data[beg_af_end_af[0]].end_min = elementToInsert.start_min-1
-		}
+	insertIndex=e.itemIndex;
+	while(elementToInsert.end_time > data[insertIndex].end_time && insertIndex < n) {
+		insertIndex++;
+	}
+	let lastIndexOverlapped=insertIndex;
 
-		if (beg_bf_end_bf.length > 0) {
-			let carry = (e.end_min==59)
-			data[beg_bf_end_bf[0]].start_min = (e.end_min==59)?0:e.end_min+1;
-			data[beg_bf_end_bf[0]].start_hour = e.end_hour + (carry)?1:0;
-			data.splice(beg_bf_end_bf[0], 0, elementToInsert);
-		}
+	if (data[lastIndexOverlapped].end_time > elementToInsert.end_time){
+		newData.push({
+			start_time: this.addMinute(elementToInsert.end_time),
+			end_time: data[lastIndexOverlapped].end_time,
+			max: data[lastIndexOverlapped].max
+		});
+	}
 
-		if (overlapped.length > 0) {
-			data.splice(overlapped[0], overlapped.length, elementToInsert)
-		}
-		if (beg_af_end_bf.length > 0) {
-			let insAfter = {
-				end_min: data[beg_af_end_bf[0]].end_min,
-				end_hour: data[beg_af_end_bf[0]].end_hour,
-				start_min: elementToInsert.end_min,
-				start_hour: elementToInsert.end_hour,
-				max: data[beg_af_end_bf[0]].max
-			}
-			data[beg_af_end_bf[0]].end_hour = elementToInsert.start_hour
-			data[beg_af_end_bf[0]].end_min = elementToInsert.start_min
-			data.splice(beg_af_end_bf[0]+1, 0, elementToInsert, insAfter)
-		}
+	i = lastIndexOverlapped+1;
+	while(i < n && !this.doesOverlap(elementToInsert, data[i])) {
+		newData.push(data[i]);
+		i++;
+	}
+
+	return newData;
 	}
 
 	fixArrayValues(arr){
 		let i = 0
 		for (i = 0; i < arr.length; i++) {
-			let hourSz = arr[i].end_hour - arr[i].start_hour;
-			let minSz = arr[i].end_min - arr[i].start_min;
-			arr[i].value = (hourSz*60+minSz)/1440 * 100;
+			arr[i].value = (arr[i].end_time-arr[i].start_time)/1440*100;
 		}
 	}
 
@@ -222,29 +214,30 @@ class App extends Component {
 		});
 
 		if (clickedData.data === "undefined") return;
-		let endText = ("0" + clickedData.data.data.end_hour).slice(-2)+":"+("0" + clickedData.data.data.end_min).slice(-2);
-		let startText = ("0" + clickedData.data.data.start_hour).slice(-2)+":"+("0" + clickedData.data.data.start_min).slice(-2);
+		let endText = "";
+		let startText = "";
+		endText += (Math.floor(clickedData.data.data.end_time/100)+"").padStart(2,"0");
+		endText += ":";
+		endText += (clickedData.data.data.end_time%100+"").padStart(2,"0");
+
+		startText += (Math.floor(clickedData.data.data.start_time/100)+"").padStart(2,"0");
+		startText += ":";
+		startText += (clickedData.data.data.start_time%100+"").padStart(2,"0");
+
 		let value = clickedData.data.data.max;
 		let max = clickedData.max;
 		let min = clickedData.min;
 		let label = (clickedData.unit==="")?(clickedData.data.data.max===0)?"OFF":"ON":clickedData.data.data.max;
-		let start_hour = clickedData.data.data.start_hour;
-		let start_min = clickedData.data.data.start_min;
-		let end_hour = clickedData.data.data.end_hour;
-		let end_min = clickedData.data.data.end_min;
 		this.setState({
 			selectedItem: {
 				unit: clickedData.unit,
+				itemIndex: clickedData.itemIndex,
 				start: startText,
 				end: endText,
 				value: value,
 				label: label,
 				min: min,
 				max: max,
-				start_hour: start_hour,
-				start_min: start_min,
-				end_hour: end_hour,
-				end_min: end_min,
 			}
 		});
 		console.log(clickedData);
@@ -255,23 +248,25 @@ class App extends Component {
 		console.log("Data to send");
 		console.log(this.state.selectedItem);
 
+		let dataToSend = this.state.settings;
 		// Decide on which array the data goes
 		switch(this.state.selectedItem.unit){
 			case "":
-				this.insertElement(this.state.selectedItem, this.state.settings.light);
+			dataToSend.light=this.insertElement(this.state.selectedItem, this.state.settings.light);
 			break;
 			case "C":
-				this.insertElement(this.state.selectedItem, this.state.settings.temperature);
+			dataToSend.temperature=this.insertElement(this.state.selectedItem, this.state.settings.temperature);
+			this.setState({todo:"nada"});
 			break;
 			case "%":
-				this.insertElement(this.state.selectedItem, this.state.settings.humidity);
+			dataToSend.humidity=this.insertElement(this.state.selectedItem, this.state.settings.humidity);
 			break;
 			default:
 				console.log("Unknown control unit");
 			break;
 		}
 
-		var data= JSON.stringify( this.state.settings );
+		var data = JSON.stringify(dataToSend);
 		console.log("The data to send: " + data);
 		fetch('/setSettings', {
 			method: "POST",
@@ -294,8 +289,7 @@ class App extends Component {
         // If the unit is "" it means illumination so the labe and only
         // ever be either "ON" or "OFF", sorry for the hack (ternary inside ternary)		
 		let newState = this.state;
-		newState.selectedItem.start_hour = parseInt(event.target.value.split(":")[0]);
-		newState.selectedItem.start_min =  parseInt(event.target.value.split(":")[1]);
+		newState.selectedItem.start = event.target.value;
 		this.setState(newState);
 	}
 
@@ -303,8 +297,7 @@ class App extends Component {
         // If the unit is "" it means illumination so the labe and only
         // ever be either "ON" or "OFF", sorry for the hack (ternary inside ternary)		
 		let newState = this.state;
-		newState.selectedItem.end_hour = parseInt(event.target.value.split(":")[0]);
-		newState.selectedItem.end_min =  parseInt(event.target.value.split(":")[1]);
+		newState.selectedItem.end = event.target.value;
 		this.setState(newState);
 	}
 

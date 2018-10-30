@@ -85,7 +85,8 @@ def getStatus(current_status):
 def getExpectedStatus():
     global db
     last_settings = db.settings.find().sort([("timestamp", pymongo.DESCENDING)]).limit(1)
-    now = datetime.utcnow()
+    now_t = datetime.utcnow()
+    now = now_t.hour * 100 + now_t.minute
     ret = {}
     try:
         settings    = last_settings.next()
@@ -94,14 +95,15 @@ def getExpectedStatus():
         humidity    = settings["humidity"]
         light       = settings["light"]
         for t in temperature:
-            if t["start_hour"] <= now.hour <= t["end_hour"] and t["start_hour"] <= now.hour <= t["end_hour"]:
+            if t["start_time"] <= now <= t["end_time"] and t["start_time"] <= now <= t["end_time"]:
                 ret["max_tmp"] = t["max"]
         for h in humidity:
-            if h["start_hour"] <= now.hour <= h["end_hour"] and h["start_hour"] <= now.hour <= h["end_hour"]:
+            if h["start_time"] <= now <= h["end_time"] and h["start_time"] <= now <= h["end_time"]:
                 ret["max_humidity"] = h["max"]
         for h in light:
-            if h["start_hour"] <= now.hour <= h["end_hour"] and h["start_hour"] <= now.hour <= h["end_hour"]:
+            if h["start_time"] <= now <= h["end_time"] and h["start_time"] <= now <= h["end_time"]:
                 ret["light"] = h["max"]
+
     except StopIteration:
         global default_settings
         default_settings['timestamp'] = now
@@ -140,46 +142,34 @@ def run():
     global default_settings
     default_settings = {
         'temperature': [{
-        'start_hour': 0,
-        'start_min': 0,
-        'end_hour': 5,
-        'end_min': 0,
+        'start_time': 0,
+        'end_time': 500,
         'max': 16.0
     },{
-        'start_hour': 5,
-        'start_min': 0,
-        'end_hour': 6,
-        'end_min': 0,
+        'start_time': 500,
+        'end_time': 600,
         'max': 30.0
     },
     {
-        'start_hour': 6,
-        'start_min': 0,
-        'end_hour': 24,
-        'end_min': 0,
+        'start_time': 600,
+        'end_time': 2400,
         'max': 16.0
     }
     ],
     'humidity': [{
-        'start_hour': 0,
-        'start_min': 0,
-        'end_hour': 24,
-        'end_min': 0,
+        'start_time': 0,
+        'end_time': 2400,
         'max': 60.0
     }],
     'light': [{
-        'start_hour': 0,
-        'start_min': 0,
-        'end_hour': 4,
-        'end_min': 0,
-        'status': 0
+        'start_time': 0,
+        'end_time': 400,
+        'max': 0
     },
     {
-        'start_hour': 4,
-        'start_min': 0,
-        'end_hour': 24,
-        'end_min': 0,
-        'status': 1
+        'start_time': 4,
+        'end_time': 2359,
+        'max': 1
     }]
     }
 

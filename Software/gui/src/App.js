@@ -160,7 +160,7 @@ class App extends Component {
 	}
 
 	getSensors() {
-		fetch('/getMonitors')
+		fetch('/getSensors')
 		.then(res => res.json())
 		.then(res => {
 			let stateCopy = this.state

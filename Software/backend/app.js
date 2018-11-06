@@ -6,7 +6,7 @@ var bodyParser = require('body-parser');
 
 var index = require('./routes/index');
 var users = require('./routes/users');
-var getMonitors = require('./routes/getMonitors');
+var getSensors = require('./routes/getSensors');
 var setSettings = require('./routes/setSettings');
 var getSettings = require('./routes/getSettings');
 
@@ -20,7 +20,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', index);
 app.use('/users', users);
-app.use('/getMonitors', getMonitors);
+app.use('/getSensors', getSensors);
 app.use('/setSettings', setSettings);
 app.use('/getSettings', getSettings);
 

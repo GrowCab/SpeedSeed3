@@ -10,6 +10,8 @@ import sys
 import logging
 import logging.handlers
 
+import mysql.connector
+
 from pymongo import MongoClient
 from datetime import datetime
 #import daemon 
@@ -38,6 +40,7 @@ def arduinoReset():
 
 def getStatus(current_status):
     global db
+    global mydb
     global arduino
     global attemps
     message = "PRINT=" + '\n'
@@ -56,6 +59,14 @@ def getStatus(current_status):
                 status = json_data['status']
                 status['timestamp'] = now
                 db.sensors.insert(status)
+
+                # Migrating to MySQL example
+                mydbres = mydb.cursor()
+                # Format properly and test!
+                # mydbres.execute("INSERT INTO sensors () VALUES ()", status)
+                myres = mydbres.fetchone()
+                # Migrating to MySQL example
+
                 current_status.update(status)
                 print(str(current_status))
                 logging.info(str(current_status))
@@ -84,7 +95,16 @@ def getStatus(current_status):
 
 def getExpectedStatus():
     global db
+    global mydb # We should get rid of these globals
+
     last_settings = db.settings.find().sort([("timestamp", pymongo.DESCENDING)]).limit(1)
+
+    # Migrating to MySQL example
+    mydbres = mydb.cursor()
+    mydbres.execute("SELECT * from settings ORDER BY id DESC LIMIT 1")
+    myres = mydbres.fetchone()
+    # Migrating to MySQL example
+
     now = datetime.utcnow()
     ret = {}
     try:
@@ -135,6 +155,7 @@ def arduinoConnect():
 
 def run():
     global db
+    global mydb
     global attemps
     global current_status
     global default_settings
@@ -197,6 +218,8 @@ def run():
     client = MongoClient(clientString)
     db = client['speedseed3']
     print(str(db))
+    mydb = mysql.connector.connect(args.server) # Full connection string
+
     time.sleep(1)
     arduinoConnect()
     i = 0

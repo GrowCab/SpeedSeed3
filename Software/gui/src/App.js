@@ -91,8 +91,8 @@ class App extends Component {
 	fixArrayValues(arr){
 		let i = 0
 		for (i = 0; i < arr.length; i++) {
-			let hourSz = arr[i].end_hour - arr[i].start_hour;
-			let minSz = arr[i].end_min - arr[i].start_min;
+			let hourSz = arr[i].end_time/100 - arr[i].start_time/100;
+			let minSz = arr[i].end_time%100 - arr[i].start_time%100;
 			arr[i].value = (hourSz*60+minSz)/1440 * 100;
 		}
 	}
@@ -105,20 +105,20 @@ class App extends Component {
 			isOpen: false,
 			settings: {
 				"temperature": [
-					{value: 10, max: 10, position:1, start_hour:0, start_min:0, end_hour:8, end_min:0},
-					{value: 20, max: 20, position:2, start_hour:8, start_min:0, end_hour:16, end_min:0},
-					{value: 30, max: 30, position:3, start_hour:16, start_min:0, end_hour:23, end_min:59},
+					{value: 10, max: 10, position:1, start_time:0, end_time:800},
+					{value: 20, max: 20, position:2, start_time:801, end_time:1600},
+					{value: 30, max: 30, position:3, start_time:1601, end_time:2359},
 				],
 				"humidity": [
-					{value: 10, max: 15, position:0, start_hour:0, start_min:0, end_hour:4, end_min:30},
-					{value: 10, max: 20, position:1, start_hour:4, start_min:30, end_hour:9, end_min:0},
-					{value: 10, max: 30, position:2, start_hour:9, start_min:0, end_hour:13, end_min:30},
-					{value: 10, max: 40, position:3, start_hour:13, start_min:30, end_hour:18, end_min:0},
-					{value: 10, max: 50, position:4, start_hour:18, start_min:0, end_hour:23, end_min:59},
+					{value: 10, max: 15, position:0, start_time:0, end_time:430},
+					{value: 10, max: 20, position:1, start_time:431, end_time:900},
+					{value: 10, max: 30, position:2, start_time:901, end_time:1330},
+					{value: 10, max: 40, position:3, start_time:1331, end_time:1800},
+					{value: 10, max: 50, position:4, start_time:1801, end_time:2359},
 				],
 				"light": [
-					{value: 1, max: 1,  position:1, start_hour:0, start_min:0, end_hour:12, end_min:0},
-					{value: 1, max: 0, position:2, start_hour:12, start_min:0, end_hour:23, end_min:59},
+					{value: 1, max: 1, position:1, start_time:0, end_time:1200},
+					{value: 1, max: 0, position:2, start_time:1201, end_hour:2359},
 				],
 			},
 			curTime: new Date(),
@@ -159,20 +159,13 @@ class App extends Component {
 		  },6000); // Get time every 60s 
 	}
 
-	getSensors() {
-		fetch('/getSensors')
+	getSensors() {		fetch('/getSensors')
 		.then(res => res.json())
 		.then(res => {
-			let stateCopy = this.state
-			let devMonitors = {}
-			devMonitors.temperature = res[0].temperature
-			devMonitors.luminance = (res[0].light==="1")?"ON":"OFF"
-			devMonitors.humidity = res[0].humidity
-			stateCopy.devMonitors = devMonitors
 			this.setState({devMonitors: {
-				temperature: res[0].temperature,
-				luminance: (res[0].light==="1")?"ON":"OFF",
-				humidity: res[0].humidity
+				temperature: res.temperature,
+				luminance: (res.light==="1")?"ON":"OFF",
+				humidity: res.humidity
 			}
 			});
 		})
@@ -185,18 +178,17 @@ class App extends Component {
 		.then(res => res.json())
 		.then(res => {
 			console.log(res);
-			let stateCopy = this.state
-			this.fixArrayValues(res.humidity);
-			this.fixArrayValues(res.temperature);
-			this.fixArrayValues(res.light);
-			stateCopy.settings.humidity = res.humidity;
-			stateCopy.settings.temperature = res.temperature;
-			stateCopy.settings.light = res.light;
+			let in_humidity = JSON.parse(res.humidity);
+			let in_temperature = JSON.parse(res.temperature);
+			let in_light = JSON.parse(res.light);
+			this.fixArrayValues(in_humidity);
+			this.fixArrayValues(in_temperature);
+			this.fixArrayValues(in_light);
 			this.setState({
 				settings: {
-					humidity: res.humidity,
-					temperature: res.temperature,
-					light: res.light
+					humidity: in_humidity,
+					temperature: in_temperature,
+					light: in_light
 				}
 			});
 		}).catch(error => console.log("getSettings error:", error));

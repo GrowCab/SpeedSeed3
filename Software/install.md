@@ -1,4 +1,4 @@
-#Setup raspbian
+# Setup raspbian
 
 
 ## Setup ntp
@@ -9,7 +9,7 @@ sudo systemctl enable ntp
 sudo timedatectl set-ntp 1
 ```
 
-##Setting up the daemon, etc 
+## Setting up the daemon, etc 
 
 Getting the source code
 ```sh

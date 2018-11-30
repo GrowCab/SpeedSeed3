@@ -18,7 +18,10 @@ from datetime import datetime
 def findArduino():
     ports = list(serial.tools.list_ports.comports())
     for p in ports:
+        print(p)
         if "Arduino" in p[1]:
+            return p
+        if "Generic CDC" in p[1]:
             return p
 
 def arduinoReset():

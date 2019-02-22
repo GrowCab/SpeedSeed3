@@ -41,7 +41,7 @@ void setup() {
 //  TWBR = 720;
   //Serial.print(TWBR);
 
-  bme280_setup();
+  bool bme320 = bme280_setup();
   Serial.print("Starting setup\n");
   relay_setup(PIN_PELTIER_1);
   relay_setup(PIN_PELTIER_2);
@@ -49,7 +49,10 @@ void setup() {
   relay_setup(PIN_HUMIDITY_FAN);
   relay_setup(PIN_LIGHT);
 //  TSL2561.init();
+if(!bme320){
   dht_setup();
+}
+
   cs.humidity = 0;
   cs.temperature = 0;
   cs.fan1_hz = 0;
@@ -66,6 +69,7 @@ void setup() {
   cs.next_light = false;
   cs.started_up = false;
   cs.missed_temp_reads = 0;
+  cs.bme320 = bme320;
   status_clear_in_buffer();
   //Serial.print("Done setup");
 

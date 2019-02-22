@@ -3,21 +3,19 @@
 BME280 bme280;
 
 
-void bme280_setup(){
-  if(!bme280.init()){
-    Serial.println("Device error!");
-  }
+bool bme280_setup(){
+  return bme280.init() ;
 }
 
 float bme280_pressure_pa(){
   return bme280.getPressure();
 }
 
-float bma280_humidity(){
+float bme280_humidity(){
   return bme280.getHumidity();
 }
 
-float bma280_altitude(){
+float bme280_altitude(){
   return bme280.calcAltitude(bme280.getPressure());
 }
 

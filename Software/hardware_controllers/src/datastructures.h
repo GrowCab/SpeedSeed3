@@ -21,5 +21,6 @@ typedef struct CurrentStatus
    bool light;
    bool next_light;
    bool started_up;
+   bool bme320;
 
 } current_status ;

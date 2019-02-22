@@ -64,7 +64,8 @@ void status_read_environment(struct CurrentStatus * cs){
     cs->humidity = hum;
     cs-> missed_temp_reads = 0;
   }
-  float temp = dht_temperature();
+  //float temp = dht_temperature();
+  float temp = bme280_temperature();
   //delay(100);
   if(!isnan(temp)){
     cs->temperature = temp;

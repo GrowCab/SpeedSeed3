@@ -40,6 +40,8 @@ void setup() {
 //  Wire.begin();
 //  TWBR = 720;
   //Serial.print(TWBR);
+
+  bme280_setup();
   Serial.print("Starting setup\n");
   relay_setup(PIN_PELTIER_1);
   relay_setup(PIN_PELTIER_2);
@@ -66,6 +68,8 @@ void setup() {
   cs.missed_temp_reads = 0;
   status_clear_in_buffer();
   //Serial.print("Done setup");
+
+
 }
 
 void loop() {

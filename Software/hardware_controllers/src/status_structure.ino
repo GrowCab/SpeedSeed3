@@ -166,7 +166,7 @@ void parse_new_data(struct CurrentStatus * cs) {
       status_print(cs);
     }else if(messageFromPC == "min_tmp"){
       strtokIndx = strtok(NULL, ",");
-      //TODO: Add the code to the python module to control this
+      //TODO: Add the code to the python module to control thi
       cs->min_tmp = atof(strtokIndx);
       cs->started_up = false;
       status_print(cs);

@@ -1,34 +1,38 @@
 var express = require('express');
 var router = express.Router();
-var fs = require("fs");
-var mongojs = require("mongojs")
+const MongoClient = require('mongodb').MongoClient;
+const assert = require('assert');
 
-var uri = "mongodb://"+process.env.mongoserver+":27017/speedseed3";
-/* SET settings listing. */
+
 router.post('/', function(req, res, next) {
+  // Create a new MongoClient
+  const client = new MongoClient();
+  // Connection URL
+  const url = "mongodb://"+process.env.mongoserver+":27017";
+  // Database Name
+  const dbName = 'speedseed3';
+  console.log("setSettings: Start");
 
-  try {
-  db = mongojs(uri, ["settings"]);
-
-  console.log(req.body);
+  console.log("Body: %j",  req.body);
   var myJson = JSON.stringify(req.body);
-  console.log(myJson);
+  console.log("Parsed: %j", myJson);
+  console.log("setSettings: Parsed json");
+  client.connect(url,function(err, client) {
+    assert.equal(null, err);
+    console.log("setSettings: Connected correctly to server");
 
-  db.on('error', function (err) {
-  console.log('database error', err)
-  })
+    const db = client.db(dbName);
 
-  db.on('connect', function (err) {
-    req.body.timestamp=new Date()
-    console.log(myJson)
-    db.settings.save(req.body)
-    res.json(myJson);
-    console.log('database connected', err)
-  })
-} catch (error) {
-  console.log("database error", error);
-}
+    const col = db.collection('settings');
 
+    db.collection('settings').insertOne(req.body, function(err, r) {
+      assert.equal(null, err);
+      assert.equal(1, r.insertedCount);
+      console.log("setSettings: Saved");
+      client.close();
+    });
+  });
+  console.log("setSettings: End");
 });
 
 module.exports = router;

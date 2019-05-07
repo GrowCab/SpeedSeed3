@@ -1,36 +1,30 @@
 var express = require('express');
 var router = express.Router();
-var http = require("http");
-var mongojs = require("mongojs");
+const MongoClient = require('mongodb').MongoClient;
+const assert = require('assert');
 
-var uri = "mongodb://"+process.env.mongoserver+":27017/speedseed3";
 /* GET users listing. */
 router.get('/', function(req, res, next) {
 
-  try {
-  db = mongojs(uri, ["sensors"]);
-  db.on('error', function (err) {
-  console.log('database error', err)
-  res.json("{status:invalid}");
-  })
-  } catch (error) {
-    console.log("database error", error);
-  }
-  
-  db.on('connect', function (err) {
-  console.log('database connected')
-  })
+  const dbName = "speedseed3";
+  const client = new MongoClient();
+  console.log("getMonitors: Start");
+  // Use connect method to connect to the Server
+  const url="mongodb://"+process.env.mongoserver+":27017";
+  MongoClient.connect(url,function(err, client) {
+    console.log(err);
+    assert.equal(null, err);
+    console.log("getMonitors: Connected correctly to server");
 
-  db.sensors.find().limit(1).sort({$natural:-1}).toArray(function(err, result) {
-    try {
-      if (err) throw err;
-      else {
-        console.log(result);
-        res.json(result);
-      }
-  } catch (err) {
-    console.log('query error', err);
-  }
+    const db = client.db(dbName);
+    db.collection('sensors').find().sort({timestamp:-1}).limit(1).toArray(function(err, docs) {
+    assert.equal(null, err);
+    // assert.equal(1, docs.length);
+    console.log("getMonitors: " + docs);
+    res.json(docs);
+    console.log("getMonitors: Done");
+    client.close();
+    });
   });
 });
 

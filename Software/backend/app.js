@@ -10,6 +10,7 @@ var getSettings = require('./routes/getSettings');
 
 var app = express();
 
+app.set('view engine', 'jade');
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));

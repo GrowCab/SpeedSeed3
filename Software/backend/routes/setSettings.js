@@ -24,7 +24,8 @@ router.post('/', function(req, res, next) {
     const db = client.db(dbName);
 
     const col = db.collection('settings');
-
+    req.body["timestamp"] = new Date();
+    console.log(req.body["timestamp"]);
     db.collection('settings').insertOne(req.body, function(err, r) {
       assert.equal(null, err);
       assert.equal(1, r.insertedCount);

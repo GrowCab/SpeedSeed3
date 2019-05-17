@@ -69,6 +69,7 @@ Create the following files:
 
 ### `/etc/systemd/system/ss3_backend.service`
 
+```
 [Service]
 WorkingDirectory=/home/pi/workspace/speedseed3/Software/backend
 ExecStart=/usr/bin/npm start
@@ -82,9 +83,10 @@ Environment=NODE_ENV=production PORT=3001 mongoserver=<IPADDRESS>
 
 [Install]
 WantedBy=multi-user.target
-
+```
 ### `/etc/systemd/system/ss3_gui.service`
 
+```
 [Service]
 WorkingDirectory=/home/pi/workspace/speedseed3/Software/gui
 ExecStart=/usr/bin/npm start
@@ -98,7 +100,10 @@ Environment=NODE_ENV=production
 
 [Install]
 WantedBy=multi-user.target
+```
 
 ### Install the services
+```sh
 sudo systemctl enable  ss3_backend
 sudo systemctl enable  ss3_gui
+```

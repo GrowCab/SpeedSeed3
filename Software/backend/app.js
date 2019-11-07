@@ -7,6 +7,8 @@ var bodyParser = require('body-parser');
 var getMonitors = require('./routes/getMonitors');
 var setSettings = require('./routes/setSettings');
 var getSettings = require('./routes/getSettings');
+var power = require('./routes/power');
+var restart = require('./routes/restart');
 
 var app = express();
 
@@ -18,6 +20,8 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/getMonitors', getMonitors);
+app.use('/powerOff', power);
+app.use('/restart', restart);
 app.use('/setSettings', setSettings);
 app.use('/getSettings', getSettings);
 

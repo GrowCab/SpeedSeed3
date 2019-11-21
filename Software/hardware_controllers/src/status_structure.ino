@@ -51,6 +51,10 @@ void status_print(struct CurrentStatus * cs){
   print_value_int("visible_lux", cs->visible_lux);
   Serial.print(",");
   print_value_int("missed_temp_reads", cs->missed_temp_reads);
+  Serial.print(",");
+  print_value_bool("bme280", cs->bme280);
+  Serial.print(",");
+  print_value_bool("bmp280", cs->bmp280);
   Serial.print("}}");
 
   Serial.println();
@@ -59,9 +63,12 @@ void status_print(struct CurrentStatus * cs){
 
 void status_read_environment(struct CurrentStatus * cs){
   float hum, temp;
-  if(cs->bme320){
+  if(cs->bme280){
     hum  = bme280_humidity();
     temp = bme280_temperature();
+  }else if(cs->bmp280){
+    hum  = bmp280_humidity();
+    temp = bmp280_temperature();
   }else{
     hum  = dht_humidity();
     temp = dht_temperature();

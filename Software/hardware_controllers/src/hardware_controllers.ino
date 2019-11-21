@@ -37,19 +37,29 @@ struct CurrentStatus cs;
 
 void setup() {
   Serial.begin(9600);
-//  Wire.begin();
-//  TWBR = 720;
-  //Serial.print(TWBR);
 
-  bool bme320 = bme280_setup();
+  bool bmp280 = false;
+  bool bme280 = false;
+
   Serial.print("Starting setup\n");
+
+  if(!bmp280){
+    bmp280 = bmp280_setup();
+  }
+  Serial.print("BMP280");
+  // if(!bme280){
+  //  bme280 = bme280_setup();
+  //}
+  //  Serial.print("BME280");
+  //bool bme280 = false;
+
   relay_setup(PIN_PELTIER_1);
   relay_setup(PIN_PELTIER_2);
   relay_setup(PIN_PELTIER_3);
   relay_setup(PIN_HUMIDITY_FAN);
   relay_setup(PIN_LIGHT);
 //  TSL2561.init();
-if(!bme320){
+if(!bme280 && !bmp280){
   dht_setup();
 }
 
@@ -69,7 +79,8 @@ if(!bme320){
   cs.next_light = false;
   cs.started_up = false;
   cs.missed_temp_reads = 0;
-  cs.bme320 = bme320;
+  cs.bme280 = bme280;
+  cs.bmp280 = bmp280;
   status_clear_in_buffer();
   //Serial.print("Done setup");
 
@@ -88,8 +99,8 @@ void loop() {
   cs.started_up = true;
   //Serial.print(".");
   if (Serial.available() > 0) {
-    //Serial.print("AVailable!\n");
-    //Serial.flush();
+    Serial.print("AVailable!\n");
+    Serial.flush();
     recvWithEndMarker(&cs);
   }
   if(cs.new_data){

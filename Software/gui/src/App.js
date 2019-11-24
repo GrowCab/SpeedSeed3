@@ -95,6 +95,8 @@ class App extends Component {
 		this.state = {
 			devMonitors: "",
 			isOpen: false,
+			powerOff_isOpen: false,
+			restart_isOpen: false,
 			settings: {
 				"temperature": [
 					{value: 10, max: 10, position:1, start_hour:0, start_min:0, end_hour:8, end_min:0},
@@ -132,10 +134,16 @@ class App extends Component {
 		this.sendSettings = this.sendSettings.bind(this);
 		this.getItems = this.getItems.bind(this);
 		this.toggleModal = this.toggleModal.bind(this);
+		this.openPowerModal = this.openPowerModal.bind(this);
+		this.openRestartModal = this.openRestartModal.bind(this);
 		this.onChange = this.onChange.bind(this);
 		this.startTimeChange = this.startTimeChange.bind(this);
 		this.endTimeChange = this.endTimeChange.bind(this);
 		this.closeModal = this.closeModal.bind(this);
+		this.closePowerModal = this.closePowerModal.bind(this);
+		this.closeRestartModal = this.closeRestartModal.bind(this);
+		this.sendPowerOff = this.sendPowerOff.bind(this);
+		this.sendRestart = this.sendRestart.bind(this);
 	}
 
 	componentDidMount(){
@@ -209,6 +217,15 @@ class App extends Component {
 	closeModal() {
 		this.setState({isOpen: false});
 	}
+
+	closePowerModal() {
+		this.setState({powerOff_isOpen: false});
+	}
+
+	closeRestartModal() {
+		this.setState({restart_isOpen: false});
+	}
+
 	toggleModal(clickedData, e) {
         this.setState({
           isOpen: !this.state.isOpen
@@ -242,8 +259,50 @@ class App extends Component {
 			}
 		});
 		console.log(clickedData);
-    }
+	}
 	
+	openPowerModal(clickedData, e) {
+		this.setState({
+			powerOff_isOpen: !this.state.powerOff_isOpen
+		});
+
+	}
+
+	openRestartModal(clickedData, e) {
+		this.setState({
+			restart_isOpen: !this.state.restart_isOpen
+		});
+
+	}
+
+	sendPowerOff(e) {
+		e.preventDefault();
+		// Choose whether it's power off or reset.
+		fetch('/powerOff')
+		.then(function(res){ return res.json();})
+		.then(function(data){console.log(JSON.stringify(data))})
+		.catch(error => console.log("power error: ", error));
+
+		this.setState({
+			powerOff_isOpen: false
+		})
+	}
+
+	sendRestart(e) {
+		e.preventDefault();
+
+		// Choose whether it's power off or reset.
+		fetch('/restart')
+		.then(function(res){ return res.json();})
+		.then(function(data){console.log(JSON.stringify(data))})
+		.catch(error => console.log("reboot error: ", error));
+		
+
+		this.setState({
+			restart_isOpen: false
+		})
+	}
+
 	sendSettings(e) {
 		e.preventDefault();
 		console.log("Data to send");
@@ -375,7 +434,24 @@ class App extends Component {
 						</form>
 					</div>
         		</ConfigForm>
-
+				<div >
+					<ConfigForm show={this.state.powerOff_isOpen}>
+						<div>
+							<p>Please confirm you want to shutdown the device</p>
+							<button onClick={this.sendPowerOff}>Accept</button>
+							<button onClick={this.closePowerModal}>Close</button>
+						</div>
+					</ConfigForm>
+					<ConfigForm show={this.state.restart_isOpen}>
+						<div>
+							<p>Please confirm you want to Restart the device</p>
+							<button onClick={this.sendRestart}>Accept</button>
+							<button onClick={this.closeRestartModal}>Close</button>
+						</div>
+					</ConfigForm>
+					<button onClick={this.openPowerModal}>Power Off</button>
+					<button onClick={this.openRestartModal}>Reset</button>
+				</div>
 			</div>
 		);
 	}

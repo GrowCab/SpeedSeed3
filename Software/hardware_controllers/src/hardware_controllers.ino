@@ -41,12 +41,12 @@ void setup() {
   bool bmp280 = false;
   bool bme280 = false;
 
-  Serial.print("Starting setup\n");
+  //Serial.print("Starting setup\n");
 
   if(!bmp280){
     bmp280 = bmp280_setup();
   }
-  Serial.print("BMP280");
+  //Serial.print("BMP280");
   // if(!bme280){
   //  bme280 = bme280_setup();
   //}
@@ -99,8 +99,8 @@ void loop() {
   cs.started_up = true;
   //Serial.print(".");
   if (Serial.available() > 0) {
-    Serial.print("AVailable!\n");
-    Serial.flush();
+    //Serial.print("AVailable!\n");
+    //Serial.flush();
     recvWithEndMarker(&cs);
   }
   if(cs.new_data){

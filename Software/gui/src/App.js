@@ -5,23 +5,12 @@ import ConfigForm from "./components/ConfigForm";
 
 class App extends Component {
 	doesOverlap(a,b){
-		return (Math.min(a.end_time,b.end_time) >= Math.max(a.start_time,b.start_time));
-	}
-	
-	addMinute(a){
-		if ((a%100)/59 >= 1){
-			a=Math.floor(a/100)*100+100;
-			if (a > 2359) {
-				a = 2359
-			}
-		} else {
-			a=a+1;
-		}
-		return a;
-	}
+		let a_end_time = a.end_hour*100 + a.end_min;
+		let a_start_time = a.start_hour*100 + a.start_min;
 
-	delMinute(a) {
-		return a%100==0?(a-41<0)?0:a-41:a-1;
+		let b_end_time = b.end_hour*100 + b.end_min;
+		let b_start_time = b.start_hour*100 + b.start_min;
+		return (Math.min(a_end_time,b_end_time) >= Math.max(a_start_time,b_start_time));
 	}
 	
 	insertElement(e, data){
@@ -29,8 +18,10 @@ class App extends Component {
 	// The new element can be:
 	let newData = [];
 	let elementToInsert = {
-		start_time: e.start.split(":")[0]*100+parseInt(e.start.split(":")[1]),
-		end_time: e.end.split(":")[0]*100+parseInt(e.end.split(":")[1]),
+		start_hour: parseInt(e.start.split(":")[0]),
+		start_min: parseInt(e.start.split(":")[1]),
+		end_hour: parseInt(e.end.split(":")[0]),
+		end_min: parseInt(e.end.split(":")[1]),
 		max: e.value
 	}
 	let insertIndex = e.itemIndex;
@@ -50,25 +41,32 @@ class App extends Component {
 		i++;
 	}
 
-	if (data[firstIndexOverlapped].start_time < elementToInsert.start_time) {
+	let data_start_time = data[firstIndexOverlapped].start_hour*100+data[firstIndexOverlapped].start_min;
+	let ei_start_time = elementToInsert.start_hour * 100 + elementToInsert.start_min;
+	if (data_start_time < ei_start_time) {
 		newData.push({
-			start_time: data[firstIndexOverlapped].start_time,
-			end_time: this.delMinute(elementToInsert.start_time),
+			start_hour: data[firstIndexOverlapped].start_hour,
+			start_min: data[firstIndexOverlapped].start_min,
+			end_hour: elementToInsert.start_hour,
+			end_min: elementToInsert.start_min,
 			max: data[firstIndexOverlapped].max
 		});
 	}
 	newData.push(elementToInsert);
 
 	insertIndex=e.itemIndex;
-	while(elementToInsert.end_time > data[insertIndex].end_time && insertIndex < n) {
+	let ei_end_time = elementToInsert.end_hour * 100 + elementToInsert.end_min;
+	while(ei_end_time > data[insertIndex].end_hour*100+data[insertIndex].end_min && insertIndex < n) {
 		insertIndex++;
 	}
 	let lastIndexOverlapped=insertIndex;
-
-	if (data[lastIndexOverlapped].end_time > elementToInsert.end_time){
+	let data_end_time = data[lastIndexOverlapped].end_hour*100+data[lastIndexOverlapped].end_min;
+	if (data_end_time > ei_end_time){
 		newData.push({
-			start_time: this.addMinute(elementToInsert.end_time),
-			end_time: data[lastIndexOverlapped].end_time,
+			start_hour: elementToInsert.end_hour,
+			start_min: elementToInsert.end_min,
+			end_hour: data[lastIndexOverlapped].end_hour,
+			end_min: data[lastIndexOverlapped].end_min,
 			max: data[lastIndexOverlapped].max
 		});
 	}
@@ -242,13 +240,15 @@ class App extends Component {
 		if (clickedData.data === "undefined") return;
 		let endText = "";
 		let startText = "";
-		endText += (Math.floor(clickedData.data.data.end_time/100)+"").padStart(2,"0");
+		let end_time = clickedData.data.data.end_hour*100 + clickedData.data.data.end_min;
+		endText += (Math.floor(end_time/100)+"").padStart(2,"0");
 		endText += ":";
-		endText += (clickedData.data.data.end_time%100+"").padStart(2,"0");
+		endText += (end_time%100+"").padStart(2,"0");
 
-		startText += (Math.floor(clickedData.data.data.start_time/100)+"").padStart(2,"0");
+		let start_time = clickedData.data.data.start_hour*100 + clickedData.data.data.start_min;
+		startText += (Math.floor(start_time/100)+"").padStart(2,"0");
 		startText += ":";
-		startText += (clickedData.data.data.start_time%100+"").padStart(2,"0");
+		startText += (start_time%100+"").padStart(2,"0");
 
 		let value = clickedData.data.data.max;
 		let max = clickedData.max;
@@ -416,7 +416,7 @@ class App extends Component {
 							<div className="form-group row">
 								<label className="col-sm-2 col-form-label" htmlFor="fromInput">From:</label>
 								<div className="col-sm-10">
-								<input disabled={true} type="time" defaultValue={this.state.selectedItem.start} onChange={this.startTimeChange}/>
+								<input disabled={true} type="time" defaultValue={this.state.selectedItem.start} value={this.state.selectedItem.start} onChange={this.startTimeChange}/>
 								</div>
 							</div>
 							<div className="form-group row">

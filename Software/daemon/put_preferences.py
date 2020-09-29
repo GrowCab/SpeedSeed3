@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 import serial.tools.list_ports
 import time
 import pymongo
@@ -122,7 +123,8 @@ default_settings = {
 }
 
 #arduino_port = findArduino()
-client = MongoClient('mongodb://35.176.230.190:27017')
+# client = MongoClient('mongodb://35.176.230.190:27017')
+client = MongoClient('mongodb://127.0.0.1:27017')
 db = client['speedseed3']
 
 #arduino = serial.Serial(arduino_port[0], 9600, timeout=.1)

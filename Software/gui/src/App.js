@@ -85,7 +85,15 @@ class App extends Component {
 	fixArrayValues(arr){
 		let i = 0
 		for (i = 0; i < arr.length; i++) {
-			arr[i].value = (arr[i].end_time-arr[i].start_time)/1440*100;
+			let start_time = arr[i].start_time;
+			if (start_time == null) {
+				start_time = arr[i].start_hour*100+arr[i].start_min
+			}
+			let end_time = arr[i].end_time;
+			if (end_time == null) {
+				end_time = arr[i].end_hour*100+arr[i].end_min
+			}
+			arr[i].value = (end_time-start_time)/1440*100;
 		}
 	}
 
@@ -105,14 +113,14 @@ class App extends Component {
 				],
 				"humidity": [
 					{value: 10, max: 15, position:0, start_hour:0, start_min:0, end_hour:4, end_min:30},
-					{value: 10, max: 20, position:1, start_hour:4, start_min:30, end_hour:9, end_min:0},
-					{value: 10, max: 30, position:2, start_hour:9, start_min:0, end_hour:13, end_min:30},
-					{value: 10, max: 40, position:3, start_hour:13, start_min:30, end_hour:18, end_min:0},
-					{value: 10, max: 50, position:4, start_hour:18, start_min:0, end_hour:23, end_min:59},
+					{value: 20, max: 20, position:1, start_hour:4, start_min:30, end_hour:9, end_min:0},
+					{value: 30, max: 30, position:2, start_hour:9, start_min:0, end_hour:13, end_min:30},
+					{value: 40, max: 40, position:3, start_hour:13, start_min:30, end_hour:18, end_min:0},
+					{value: 50, max: 50, position:4, start_hour:18, start_min:0, end_hour:23, end_min:59},
 				],
 				"light": [
 					{value: 1, max: 1,  position:1, start_hour:0, start_min:0, end_hour:12, end_min:0},
-					{value: 1, max: 0, position:2, start_hour:12, start_min:0, end_hour:23, end_min:59},
+					{value: 2, max: 0, position:2, start_hour:12, start_min:0, end_hour:23, end_min:59},
 				],
 			},
 			curTime: new Date(),
@@ -316,7 +324,6 @@ class App extends Component {
 			break;
 			case "C":
 			dataToSend.temperature=this.insertElement(this.state.selectedItem, this.state.settings.temperature);
-			this.setState({todo:"nada"});
 			break;
 			case "%":
 			dataToSend.humidity=this.insertElement(this.state.selectedItem, this.state.settings.humidity);

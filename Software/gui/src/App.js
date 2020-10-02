@@ -173,12 +173,12 @@ class App extends Component {
 			let stateCopy = this.state
 			let devMonitors = {}
 			devMonitors.temperature = res[0].temperature
-			devMonitors.luminance = (res[0].light=="1")?"ON":"OFF"
+			devMonitors.luminance = (res[0].light===1)?"ON":"OFF"
 			devMonitors.humidity = res[0].humidity
 			stateCopy.devMonitors = devMonitors
 			this.setState({devMonitors: {
 				temperature: res[0].temperature,
-				luminance: (res[0].light=="1")?"ON":"OFF",
+				luminance: (res[0].light===1)?"ON":"OFF",
 				humidity: res[0].humidity
 			}
 			});

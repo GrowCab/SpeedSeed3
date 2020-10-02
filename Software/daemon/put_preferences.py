@@ -94,16 +94,16 @@ default_settings = {
     {
         'start_hour': 6,
         'start_min': 0,
-        'end_hour': 24,
-        'end_min': 0,
+        'end_hour': 23,
+        'end_min': 59,
         'max': 16.0
     }
     ],
     'humidity': [{
         'start_hour': 0,
         'start_min': 0,
-        'end_hour': 24,
-        'end_min': 0,
+        'end_hour': 23,
+        'end_min': 59,
         'max': 60.0
     }],
     'light': [{
@@ -116,8 +116,8 @@ default_settings = {
     {
         'start_hour': 4,
         'start_min': 0,
-        'end_hour': 24,
-        'end_min': 0,
+        'end_hour': 23,
+        'end_min': 59,
         'status': 1
     }]
 }

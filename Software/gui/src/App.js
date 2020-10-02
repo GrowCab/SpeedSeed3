@@ -72,11 +72,11 @@ class App extends Component {
 	}
 
 	i = lastIndexOverlapped+1;
-	while(i < n && !this.doesOverlap(elementToInsert, data[i])) {
+	while(i < n) {
 		newData.push(data[i]);
+		if (!this.doesOverlap(elementToInsert, data[i])) break
 		i++;
 	}
-
 	return newData;
 	}
 

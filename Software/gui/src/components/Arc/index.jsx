@@ -57,12 +57,17 @@ class DialSetting extends Arc {
           labelTranslate = `translate(${labelX}, ${labelY})`;
 
       return (
-          <g onClick={this.props.onClick.bind(this, this.props)}
-          >
+          <g onClick={this.props.onClick.bind(this, this.props)}>
               {super.render()}
               <text transform={labelTranslate}
                     textAnchor="middle">
-                  {(this.props.unit!=="")?this.props.data.data.max:(Number(this.props.data.data.status)===1)?"ON":"OFF"} {this.props.unit}
+                        {
+                        (this.props.unit!=="")?
+                            this.props.data.data.max :
+                                (Number(this.props.data.data.max)===1)?
+                                    "ON":"OFF"
+                                } 
+                        {this.props.unit}
               </text>
           </g>
       );

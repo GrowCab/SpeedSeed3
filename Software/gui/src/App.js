@@ -253,7 +253,7 @@ class App extends Component {
 		let value = clickedData.data.data.max;
 		let max = clickedData.max;
 		let min = clickedData.min;
-		let label = (clickedData.unit==="")?(clickedData.data.data.max===0)?"OFF":"ON":clickedData.data.data.max;
+		let label = (clickedData.unit==="")?(clickedData.data.data.max==='1')?"ON":"OFF":clickedData.data.data.max;
 		this.setState({
 			selectedItem: {
 				unit: clickedData.unit,

@@ -98,12 +98,18 @@ def getExpectedStatus():
         humidity    = settings["humidity"]
         light       = settings["light"]
         for t in temperature:
+            t["start_time"] = t["start_min"] * 100 + t["start_hour"]
+            t["end_time"] = t["end_min"] * 100 + t["end_hour"]
             if t["start_time"] <= now <= t["end_time"] and t["start_time"] <= now <= t["end_time"]:
                 ret["max_tmp"] = t["max"]
         for h in humidity:
+            h["start_time"] = h["start_min"] * 100 + h["start_hour"]
+            h["end_time"] = h["end_min"] * 100 + h["end_hour"]
             if h["start_time"] <= now <= h["end_time"] and h["start_time"] <= now <= h["end_time"]:
                 ret["max_humidity"] = h["max"]
         for h in light:
+            h["start_time"] = h["start_min"] * 100 + h["start_hour"]
+            h["end_time"] = h["end_min"] * 100 + h["end_hour"]
             if h["start_time"] <= now <= h["end_time"] and h["start_time"] <= now <= h["end_time"]:
                 ret["light"] = h["max"]
 
@@ -143,38 +149,6 @@ def run():
     global attemps
     global current_status
     global default_settings
-    default_settings = {
-        'temperature': [{
-        'start_time': 0,
-        'end_time': 500,
-        'max': 16.0
-    },{
-        'start_time': 500,
-        'end_time': 600,
-        'max': 30.0
-    },
-    {
-        'start_time': 600,
-        'end_time': 2400,
-        'max': 16.0
-    }
-    ],
-    'humidity': [{
-        'start_time': 0,
-        'end_time': 2400,
-        'max': 60.0
-    }],
-    'light': [{
-        'start_time': 0,
-        'end_time': 400,
-        'max': 0
-    },
-    {
-        'start_time': 4,
-        'end_time': 2359,
-        'max': 1
-    }]
-    }
 
     reader = codecs.getreader("ascii")
     log_handler = logging.handlers.WatchedFileHandler('my.log')

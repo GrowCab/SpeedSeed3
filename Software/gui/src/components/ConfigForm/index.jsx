@@ -1,6 +1,10 @@
 import React, { Component } from "react";
  
 class ConfigForm extends Component {
+    constructor(props) {
+      super(props);
+      }
+   
 
     render() {
         if(!this.props.show) {
@@ -34,9 +38,40 @@ class ConfigForm extends Component {
 		return (
             <div className="backdrop" style={backdropStyle}>
                 <div className="modal" style={modalStyle}>
-                {this.props.children}
+					<div className="float-left">
+						<form padding-top="20" vertical-align="center" top="50%">
+							<div className="form-group row">
+								<label className="col-sm-2 col-form-label" htmlFor="fromInput">From:</label>
+								<div className="col-sm-10">
+								<input disabled={true} type="time" defaultValue={this.props.selectedItem.start} value={this.props.selectedItem.start} onChange={this.props.startTimeChange}/>
+								</div>
+							</div>
+							<div className="form-group row">
+								<label className="col-sm-2 col-form-label"  htmlFor="toInput">To:</label>
+								<div className="col-sm-10">
+								<input type="time" defaultValue={this.props.selectedItem.end} onChange={this.props.endTimeChange}/>
+								</div>
+							</div>
+							<div className="form-group row">
+								<label className="col-sm-2 col-form-label" htmlFor="valueInput">{this.props.selectedItem.unit}</label>
+								<div className="col-sm-10">
+									<input id="valueInput" type="range"
+										value={this.props.selectedItem.value}
+                    min={this.props.selectedItem.min} max={this.props.selectedItem.max} 
+                    onInput={this.props.onChange}
+									/>
+									<label>{this.props.selectedItem.label}</label>
+								</div>
+							</div>
+							<button onClick={this.props.sendSettings} className="btn btn-primary">Save</button>
+							<button onClick={this.props.closeModal} className="btn btn-primary">Close</button>
+						</form>
+					</div>
+
                 </div>
         </div>
+
+        
 		);
 	}
 }

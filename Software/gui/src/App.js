@@ -370,15 +370,18 @@ class App extends Component {
 
 	onChange(event) {
         // If the unit is "" it means illumination so the labe and only
-        // ever be either "ON" or "OFF", sorry for the hack (ternary inside ternary)
-        let val = (this.state.selectedItem.unit==="")?
-                (event.target.value==="0")?"OFF":"ON" :
+		// ever be either "ON" or "OFF", sorry for the hack (ternary inside ternary)
+        let val = (!this.state.selectedItem.unit)?
+                (event.target.value==='0')?"OFF":"ON" :
 				event.target.value;
-		
-		let newState = this.state;
-		newState.selectedItem.value = event.target.value;
-		newState.selectedItem.label = val;
-		this.setState(newState);
+
+		this.setState({
+			selectedItem: {
+				...this.state.selectedItem,
+				value: event.target.value,
+				label: val
+			}
+		})
 	}
 	
 	render() {
@@ -409,37 +412,13 @@ class App extends Component {
 						</div>
 					</div>
 				</div>
-				<ConfigForm
-            		show={this.state.isOpen}>
-					<div className="float-left">
-						<form padding-top="20" vertical-align="center" top="50%">
-							<div className="form-group row">
-								<label className="col-sm-2 col-form-label" htmlFor="fromInput">From:</label>
-								<div className="col-sm-10">
-								<input disabled={true} type="time" defaultValue={this.state.selectedItem.start} value={this.state.selectedItem.start} onChange={this.startTimeChange}/>
-								</div>
-							</div>
-							<div className="form-group row">
-								<label className="col-sm-2 col-form-label"  htmlFor="toInput">To:</label>
-								<div className="col-sm-10">
-								<input type="time" defaultValue={this.state.selectedItem.end} onChange={this.endTimeChange}/>
-								</div>
-							</div>
-							<div className="form-group row">
-								<label className="col-sm-2 col-form-label" htmlFor="valueInput">{this.state.selectedItem.unit}</label>
-								<div className="col-sm-10">
-									<input id="valueInput" type="range"
-										value={this.state.selectedItem.value}
-										min={this.state.selectedItem.min} max={this.state.selectedItem.max} 
-										onChange={this.onChange}
-									/>
-									<label>{this.state.selectedItem.label}</label>
-								</div>
-							</div>
-							<button onClick={this.sendSettings} className="btn btn-primary">Save</button>
-							<button onClick={this.closeModal} className="btn btn-primary">Close</button>
-						</form>
-					</div>
+				<ConfigForm show={this.state.isOpen}
+				sendSettings={this.sendSettings}
+				closeModal={this.closeModal}
+				onChange={this.onChange}
+				selectedItem={this.state.selectedItem}
+				startTimeChange={this.startTimeChange}
+				endTimeChange={this.endTimeChange}>
         		</ConfigForm>
 				<div >
 					<ConfigForm show={this.state.powerOff_isOpen}>

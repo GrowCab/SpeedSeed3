@@ -128,7 +128,7 @@ def setArduinoProperty(setting, value):
 def setExpectedStatus(expected, current):
     changed = False
     for prop in ["max_tmp", "max_humidity", "light"]:
-        if(current[prop] != expected[prop]):
+        if(int(current[prop]) != int(expected[prop])):
             setArduinoProperty(prop, expected[prop])
             changed = True
     if changed:

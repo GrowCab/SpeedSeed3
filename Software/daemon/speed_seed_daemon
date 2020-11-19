@@ -98,14 +98,20 @@ def getExpectedStatus():
         humidity    = settings["humidity"]
         light       = settings["light"]
         for t in temperature:
+            t["start_time"] = t["start_min"] + 100*t["start_hour"]
+            t["end_time"] = t["end_min"] + 100*t["end_hour"]
             if t["start_time"] <= now <= t["end_time"] and t["start_time"] <= now <= t["end_time"]:
                 ret["max_tmp"] = t["max"]
         for h in humidity:
+            h["start_time"] = h["start_min"] + 100*h["start_hour"]
+            h["end_time"] = h["end_min"] + 100*h["end_hour"]
             if h["start_time"] <= now <= h["end_time"] and h["start_time"] <= now <= h["end_time"]:
                 ret["max_humidity"] = h["max"]
         for h in light:
+            h["start_time"] = h["start_min"] + 100*h["start_hour"]
+            h["end_time"] = h["end_min"] + 100*h["end_hour"]
             if h["start_time"] <= now <= h["end_time"] and h["start_time"] <= now <= h["end_time"]:
-                ret["light"] = h["max"]
+                ret["light"] = h["status"]
 
     except StopIteration:
         global default_settings
